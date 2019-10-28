@@ -1,17 +1,25 @@
 (function () {
+  var m_AverageStoneHeight = 20;
+  var m_AverageStoneWidth = 40;
 
+  var m_Offset = 0.5; 
+
+  
 
   var m_Canvas = document.getElementById("wallCanvas");
   var m_Context = m_Canvas.getContext("2d");
   m_Context.moveTo(0,0);
   m_Context.lineTo(200,100);
   m_Context.stroke();
-  console.log("HOLA CARACOLA");
 
-  var posicion = {
-    x: 10,
-    y: 20
-  }
+
+  var x = Math.floor(m_AverageStoneWidth * (Math.random() + m_Offset));
+  var y = Math.floor(m_AverageStoneHeight * (Math.random() + m_Offset));
+  // console.log(x);
+  // console.log(y);
+
+
+  var posicion = new Position(x, y);
 
   var m_Node = new WallNode(posicion, null, null, null, null);
 
@@ -25,7 +33,7 @@
   var posicion2 = {
     x: 30,
     y: 40
-  }
+  };
 
 
   var m_Node2 = new WallNode(posicion2, null, null, m_Node, null);
