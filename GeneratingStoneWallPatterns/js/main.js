@@ -2,7 +2,7 @@
   var m_AverageStoneHeight = 20;
   var m_AverageStoneWidth = 40;
 
-  var m_Offset = 0.5; 
+  var m_Offset = 0.5; //the noise for length
 
   
 
@@ -12,6 +12,10 @@
   m_Context.lineTo(200,100);
   m_Context.stroke();
 
+  //console.log(m_Index);
+
+  //PRUEBAS
+  /*
 
   var x = Math.floor(m_AverageStoneWidth * (Math.random() + m_Offset));
   var y = Math.floor(m_AverageStoneHeight * (Math.random() + m_Offset));
@@ -44,7 +48,7 @@
   console.log(m_Node2.right);
   console.log(m_Node2.left);
 
-
+*/
 
 
 }());
