@@ -21,9 +21,11 @@
     m_GlobalNodeList.length = 0; //clear the array
     m_NodeFloorList.length = 0;
     
-    firstRow(0, m_CanvasWidth, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    makeWallJointPattern();
       
     paintWall();
+
+    paintFloor();
   }
 
   //LISTENERS

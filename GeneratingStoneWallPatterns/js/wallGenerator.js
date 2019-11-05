@@ -1,10 +1,13 @@
 
+function makeWallJointPattern(){
+
+    firstRow(0, m_CanvasWidth, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+
+}
+
 function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
 
     var wallWidth = wallFinal - wallInit;
-
-    var nodeFloor = []; //lista de nodos que forman el techo
-
 
     var position;
     var leftDownNode;
@@ -30,7 +33,7 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
         //SET LEFT SIDE JOINTS
 
-        if(nodeFloor.length == 0){ //If its the first brick...
+        if(m_GlobalNodeList.length == 0){ //If its the first brick...
 
             //leftdown (0)
             position = new Position(0, 0);
@@ -41,7 +44,7 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
             position = new Position(0, brickHeight);
             leftUpNode = new WallNode(position, null, leftDownNode, null, null);
             m_GlobalNodeList.push(leftUpNode);
-            nodeFloor.push(leftUpNode);
+            m_NodeFloorList.push(leftUpNode);
 
             //update links
             leftDownNode.upper = leftUpNode;
@@ -100,7 +103,7 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
         position = new Position(traveled, brickHeight);
         rightUpNode = new WallNode(position, null, null, null, leftUpNode);
         m_GlobalNodeList.push(rightUpNode);
-        nodeFloor.push(rightUpNode);
+        m_NodeFloorList.push(rightUpNode);
 
         //rightdown (3)
         position = new Position(traveled, 0);
@@ -112,10 +115,111 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
     }
 
-    return nodeFloor;
-
 }
 
 function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
 
+    var wallWidth = wallFinal - wallInit;
+
+    var position;
+    var leftDownNode;
+    var leftUpNode;
+    var rightDownNode;
+    var rightUpNode;
+
+    var currentNode;
+    var nextNode;
+
+
+    var brickWidth = 0;
+    var brickHeight = 0;
+
+    var traveled = 0;
+
+    var index = 0;
+    
+
+
+
+    while(traveled < wallWidth){
+
+        currentNode = m_NodeFloorList[index];
+        nextNode = m_NodeFloorList[index + 1];
+
+        if(noise > 1){
+            noise = 0.99; //Evade invisible bricks and noise excess
+        }
+
+        //random * (max - min) + min;
+        brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
+        brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
+    
+        //SET LEFT SIDE JOINTS
+
+        if(index == 0){ //First brick
+
+            //leftdown (0)
+            leftDownNode = currentNode;
+            //m_GlobalNodeList.push(leftDownNode); No hace falta porque ya esta...
+            
+            //leftup (1)
+            position = new Position(0, brickHeight + leftDownNode.position.y);
+            leftUpNode = new WallNode(position, null, leftDownNode, null, null);
+            m_GlobalNodeList.push(leftUpNode);
+            m_NodeFloorList.push(leftUpNode);
+            
+            //update links
+            leftDownNode.upper = leftUpNode;
+
+        }
+        else{
+
+        }
+
+
+        //CHECK RIGHT BOUNDARY
+        traveled += brickWidth;
+
+        if(traveled > wallWidth){ // si el ladrillo sobrepasa el tamaño del muro, lo ajustamos
+        
+            var surplus = traveled - wallWidth;
+            brickWidth -= surplus;
+            traveled -= surplus;
+            //traveled seria igual que wallWidth con lo que esta seria la ultima iteracion del bucle
+        }
+        
+        //SET RIGHT SIDE JOINTS
+
+        if(index = 0){ //first brick
+
+            //TRAVELED LA MITAD DE LA POSICION DEL NEXT NODE.RECUERDA ACTUALIZAR!!!
+
+            //rightup (2)
+            position = new Position(traveled, brickHeight);
+            rightUpNode = new WallNode(position, null, null, null, leftUpNode);
+            m_GlobalNodeList.push(rightUpNode);
+            m_NodeFloorList.push(rightUpNode);
+
+            //rightdown (3)
+            position = new Position(traveled, 0);
+            rightDownNode = new WallNode(position, rightUpNode, null, null, leftDownNode);
+            m_GlobalNodeList.push(rightDownNode);
+
+            //update links
+            rightUpNode.lower = rightDownNode;
+
+        }
+        else{
+
+        }
+
+        index ++;
+        index ++; //+2 porque hemos de passar al otro techo? ?
+    }
+
+    //Empezar desde la mitad de el primer ladrillo... (?)
+
+    //Rellenar huecos con teselación
+
+    //Actualizar m_NodeFloorList
 }
