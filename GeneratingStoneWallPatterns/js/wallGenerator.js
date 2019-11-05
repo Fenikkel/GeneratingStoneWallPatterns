@@ -23,17 +23,10 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
         if(noise > 1){
             noise = 0.99; //Evade invisible bricks and noise excess
         }
-        console.log(noise);
-        console.log(averageBrickWidth);
-        console.log(averageBrickHeight);
-
 
         //random * (max - min) + min;
         brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
         brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
-        
-        // brickWidth = Math.floor(averageBrickWidth  * (Math.random() + noise));
-        // brickHeight = Math.floor(averageBrickHeight  * (Math.random() + noise));
 
         //SET LEFT SIDE JOINTS
 

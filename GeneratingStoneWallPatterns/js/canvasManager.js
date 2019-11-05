@@ -1,5 +1,7 @@
 function paintWall(){
 
+    m_Context.beginPath();
+
     var currentNode;
     for(var index = 0; index < m_GlobalNodeList.length ; index ++){
 
@@ -29,7 +31,12 @@ function paintWall(){
         }
 
     }
-    m_Context.strokeStyle = "red";
+    
+    m_Context.strokeStyle = "blue";
+
     m_Context.stroke();
+
+
+
 
 }
