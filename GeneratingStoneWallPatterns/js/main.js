@@ -1,54 +1,30 @@
 (function () {
-  var m_AverageStoneHeight = 20;
-  var m_AverageStoneWidth = 40;
-
-  var m_Offset = 0.5; //the noise for length
 
   
+  try {
+    /*
+    console.log(m_AverageBrickWidth);
+    console.log(m_AverageBrickHeight);
+    console.log(m_Noise);
+    console.log(m_Canvas);
+    console.log(m_Context);
+    */
 
-  var m_Canvas = document.getElementById("wallCanvas");
-  var m_Context = m_Canvas.getContext("2d");
-  m_Context.moveTo(0,0);
-  m_Context.lineTo(200,100);
-  m_Context.stroke();
-
-  //console.log(m_Index);
-
-  //PRUEBAS
-  /*
-
-  var x = Math.floor(m_AverageStoneWidth * (Math.random() + m_Offset));
-  var y = Math.floor(m_AverageStoneHeight * (Math.random() + m_Offset));
-  // console.log(x);
-  // console.log(y);
+    //console.log(m_GlobalNodeList);
 
 
-  var posicion = new Position(x, y);
 
-  var m_Node = new WallNode(posicion, null, null, null, null);
-
-  console.log(m_Node.position);
-  console.log(m_Node.upper);
-  console.log(m_Node.lower);
-  console.log(m_Node.right);
-  console.log(m_Node.left);
+    //var nodeFloor = firstRow(0, 512, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    firstRow(0, 512, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    
+    paintWall();
+    //console.log(nodeFloor);
 
 
-  var posicion2 = {
-    x: 30,
-    y: 40
-  };
-
-
-  var m_Node2 = new WallNode(posicion2, null, null, m_Node, null);
-
-  console.log(m_Node2.position);
-  console.log(m_Node2.upper);
-  console.log(m_Node2.lower);
-  console.log(m_Node2.right);
-  console.log(m_Node2.left);
-
-*/
+  }
+  catch(error) {
+    console.error(error);
+  }
 
 
 }());

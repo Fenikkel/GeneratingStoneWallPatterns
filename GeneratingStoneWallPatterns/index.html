@@ -7,14 +7,40 @@
 </head>
 <body>
   <div id="divCnvs">
-    <canvas id="wallCanvas" width="400" height="400" style="border:1px solid #d3d3d3;">
+
+    <canvas id="wallCanvas" width="512" height="512" style="border:1px solid #d3d3d3;">
       Your browser does not support the HTML5 canvas tag.</canvas>
       
   </div>
+
+  <div id="divBrickSize">
+
+      <p>Width: <input type="number" name="width" id="brickWidth" size="10" value="60"></p>
+      <p>Height: <input type="number" name="height" id="brickHeight" size="10" value="25"></p>
+      
+  </div>
+
+  <div id="divNoise">
+
+    <label class="nlabel">Noise: </label>
+    <input type="number" id="iNoisePc" min="0" max="100" value="50" />
+    <label for="iNoisePc">%</label>
+
+  </div>
+
+  <div class="divBtnBar">
+
+    <button type="button" id="cancelBtn">Cancel</button>
+    <button type="button" id="okBtn">OK</button>
+
+  </div>
+
   <script src="js/gobalVariables.js"></script>
   <script src="js/classes/position.js"></script>
   <script src="js/classes/edge.js"></script>
   <script src="js/classes/wallNode.js"></script>
+  <script src="js/canvasManager.js"></script>
+  <script src="js/wallGenerator.js"></script>
   <script src="js/main.js"></script>
 
 </body>

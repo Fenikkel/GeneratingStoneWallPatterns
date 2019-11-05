@@ -16,17 +16,28 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
     var brickWidth = 0;
     var brickHeight = 0;
 
-    var nodeIndex = 0;
     var traveled = 0;
 
     while(traveled < wallWidth){
 
-        brickWidth = Math.floor(averageBrickWidth  * (Math.random() + noise));
-        brickHeight = Math.floor(averageBrickHeight  * (Math.random() + noise));
+        if(noise > 1){
+            noise = 0.99; //Evade invisible bricks and noise excess
+        }
+        console.log(noise);
+        console.log(averageBrickWidth);
+        console.log(averageBrickHeight);
+
+
+        //random * (max - min) + min;
+        brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
+        brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
+        
+        // brickWidth = Math.floor(averageBrickWidth  * (Math.random() + noise));
+        // brickHeight = Math.floor(averageBrickHeight  * (Math.random() + noise));
 
         //SET LEFT SIDE JOINTS
 
-        if(nodeFloor.length == 0){ //Si es el primer ladrillo
+        if(nodeFloor.length == 0){ //If its the first brick...
 
             //leftdown (0)
             position = new Position(0, 0);
@@ -112,60 +123,6 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
 }
 
+function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
 
-
-/*
-function firstLine(init, final, averageWidth, averageHeight){
-
-    var wallWidth = final - init;
-
-    var counter = 0;
-    var width = 0;
-    var height = 0;
-
-    while (wallWidth > counter){
-
-        width = Math.floor(averageWidth  * (Math.random() + m_Offset));
-        height = Math.floor(averageHeight * (Math.random() + m_Offset));
-
-        counter += width;
-
-        if(counter > wallWidth){ //si se pasa,  lo recortamos
-            var surplus = counter - wallWidth
-            width -=  surplus;
-            counter -= surplus;
-        }
-        //DOWN LEFT
-        var downLeftPosition = new Position(init, 0);
-
-        var downLeftNode = new WallNode(downLeftPosition, null, null, null, null); //u, d, r, l
-
-        //UP LEFT
-        var upLeftPosition = new Position(init, height);
-
-        var upLeftNode = new WallNode(upLeftPosition, null, downLeftNode, null, null);
-
-        downLeftNode.upper = upLeftNode;
-
-        //DOWN RIGHT
-        var downRightPosition = new Position(width, 0);
-
-        var downRightNode = new WallNode(downRightPosition, null, null, null, downLeftNode);
-
-        downLeftNode.right = downRightNode;
-
-        //UP RIGHT
-        var upRightPosition = new Position(width, height);
-
-        var upRightNode = new WallNode(upRightPosition, null, downRightNode, null, upLeftNode);
-
-        downRightNode.upper = upRightNode;
-
-        upLeftNode.right = upRightNode;
-
-
-
-    }
-    
 }
-*/
