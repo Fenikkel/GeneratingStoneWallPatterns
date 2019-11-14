@@ -1,8 +1,8 @@
 
 function makeWallJointPattern(){
 
-    firstRow(0, m_CanvasWidth, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    nextRow(0, m_CanvasWidth, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    //nextRow(0, m_CanvasWidth, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
 }
 
@@ -24,7 +24,7 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
     while(traveled < wallWidth){
 
-        if(noise > 1){
+        if(noise >= 1){
             noise = 0.99; //Evade invisible bricks and noise excess
         }
 
@@ -68,9 +68,13 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
                 leftUpNode.lower = previousRightUpNode;
                 previousRightUpNode.upper = leftUpNode;
+                previousRightUpNode.lower = leftDownNode; //secure step
+                leftDownNode.upper = previousRightUpNode; //secure step
+
+                m_GlobalNodeList.push(leftUpNode);
 
             }
-            else{ //Smaller brick case
+            else if(previousRightUpNode.position.y > leftUpNode.position.y){ //Smaller brick case
 
                 leftDownNode.upper = leftUpNode; // previousDonwRightNode
                 leftUpNode.lower = leftDownNode;
@@ -78,12 +82,17 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
                 previousRightUpNode.lower = leftUpNode;
                 leftUpNode.upper = previousRightUpNode;
 
+                m_GlobalNodeList.push(leftUpNode);
+
+            }
+            else{ //same node (rare case)
+                leftUpNode = previousRightUpNode;
             }
 
             //update arrays
-            m_GlobalNodeList.push(leftDownNode);
-            m_GlobalNodeList.push(leftUpNode);
 
+            //leftDownNode and leftUpNode are already in the global node list
+            m_NodeFloorList.push(leftUpNode); //The array accept repeted right?
         }
 
 
@@ -113,6 +122,8 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
         //update links
         rightUpNode.lower = rightDownNode;
+        leftUpNode.right = rightUpNode;
+        leftDownNode.right = rightDownNode;
 
     }
 
@@ -120,7 +131,7 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
 function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
 
-    var wallWidth = wallFinal;// - wallInit;
+    var wallWidth = wallFinal;
 
     var position;
     var leftDownNode;
@@ -140,16 +151,21 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
     var firstBrick = true;
     var index = 0;
     var crash = false;
+
+    var peak = 0;
+
+    var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor)
     
 
-    var TEMPORAL =0;    
+    var TEMPORAL =0;  
+    
+    //Initialize the first piece of foof for stand our first brick of the row
+    currentNode = m_NodeFloorList[index]; 
+    nextNode = m_NodeFloorList[index + 1];
 
-    while(TEMPORAL<2){//traveled < wallWidth){
+    while(traveled < wallWidth){//traveled < wallWidth){ //TEMPORAL < 6){
 
-        currentNode = m_NodeFloorList[index];
-        nextNode = m_NodeFloorList[index + 1];
-
-        if(noise > 1){
+        if(noise >= 1){
             noise = 0.99; //Evade invisible bricks and noise excess
         }
 
@@ -160,28 +176,70 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
 
         //UPDATE TRAVELED
 
-        if(firstBrick){ //first brick
-            traveled = nextNode.position.x / 2; // just until half of the first down rown brick 
+        if(firstBrick){ //fisrt brick always be the half of the previous first brick
+            traveled = nextNode.position.x / 2;
         }
         else{
             traveled += brickWidth;
         }
 
-
         //CHECK RIGHT BOUNDARY
 
-        if(traveled > wallWidth){ // si el ladrillo sobrepasa el tamaño del muro, lo ajustamos
+        if(traveled > wallWidth){ // if traveled is greater than the wall width, we adjust it
         
             var surplus = traveled - wallWidth;
             brickWidth -= surplus;
             traveled -= surplus;
             //traveled seria igual que wallWidth con lo que esta seria la ultima iteracion del bucle
         }
-        if(traveled > nextNode.position.x && nextNode.upper != null){ //si no es null significa que el siguiente techo esta mas arriba con lo que xocara
 
-            crash = true;
+        peak = nextNode.position.y;//reset peak
+        while(traveled > nextNode.position.x){ //find the last piece of roof
+
+            console.log("HI");
+            if(nextNode.position.y > peak){ //and save the most peak altitude
+                peak = nextNode.position.y;
+                crash = true;
+                console.log("PEAKED");
+
+            }
+
+            index += 2;
+
+            currentNode = m_NodeFloorList[index];
+            nextNode = m_NodeFloorList[index + 1];
+
+            console.log(currentNode);
+            console.log(nextNode);
+
+            console.log("TRAVELED: " + traveled);
+            console.log(nextNode.position.x);
+
+
+
+
+            if ( index >= m_NodeFloorList.lenght){ //if traveled is greater than last floor means that we pass the right boundary
+                index = m_NodeFloorList.lenght-1;
+                console.log("BREAK!");
+                currentNode = m_NodeFloorList[index];
+                nextNode = m_NodeFloorList[index + 1];
+
+                break;
+            }
 
         }
+
+
+
+
+
+
+
+        // if(traveled > nextNode.position.x && nextNode.upper != null){ //si no es null significa que el siguiente techo esta mas arriba con lo que xocara
+
+        //     crash = true;
+
+        // }
 
 
 
@@ -191,13 +249,13 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
 
             //leftdown (0)
             leftDownNode = currentNode;
-            //m_GlobalNodeList.push(leftDownNode); No hace falta porque ya esta...
+            
             
             //leftup (1)
             position = new Position(wallInit, brickHeight + leftDownNode.position.y);
             leftUpNode = new WallNode(position, null, leftDownNode, null, null);
             m_GlobalNodeList.push(leftUpNode);
-            m_NodeFloorList.push(leftUpNode);
+            nextNodeFloorList.push(leftUpNode);
             
             //update links
             leftDownNode.upper = leftUpNode;
@@ -206,12 +264,12 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         else{
             //leftdown (0)
 
-            if(crash){
+            if(crash){ //estara encima del siguiente ladrillo
                 position = new Position(rightDownNode.position.x, nextNode.upper.position.y);
                 leftDownNode = new WallNode(position, null, null, null, null);
                 m_GlobalNodeList.push(leftDownNode);
             }
-            else{
+            else{ //estara encima del mismo ladrillo que el anterior
                 leftDownNode = rightDownNode; //our last rightDownNode
             }
 
@@ -221,37 +279,66 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
             if(crash){
                 position = new Position(rightDownNode.position.x, nextNode.upper.position.y + brickHeight);
             }
-            else{
+            else{ //si no ha chocado y es mas pequeño..
                 position = new Position(leftDownNode.position.x, brickHeight + leftDownNode.position.y);
-                m_NodeFloorList.push(leftUpNode);
             }
             
             leftUpNode = new WallNode(position, null, null, null, null);
-            m_GlobalNodeList.push(leftUpNode);
 
+            if(leftUpNode.position.y < rightUpNode.position.y){
 
-                        
-            //update links (MIRAR DE TENER EN CUENTA EL CRASH)
-
-            if( (brickHeight + leftDownNode.position.y) > rightUpNode.position.y){ //si esta mas alto
-
-                leftUpNode.lower = rightUpNode;
-                rightUpNode.lower = leftDownNode; //rememeber we still have the last rightUpNode
-                rightUpNode.upper = leftUpNode;
-                leftDownNode.upper = rightUpNode;
-            }
-            else{ // si es mas bajo
-
-
-                leftUpNode.lower = rightDownNode; // or leftdownnode
-                leftUpNode.upper = rightUpNode; 
-
-                rightUpNode.lower = leftUpNode; //rememeber we still have the last rightUpNode
                 rightUpNode.upper = null;
-
+                rightUpNode.lower = leftUpNode;
+                leftUpNode.upper = rightUpNode;
+                leftUpNode.lower = leftDownNode;
                 leftDownNode.upper = leftUpNode;
 
             }
+            else if(leftUpNode.position.y > rightUpNode.position.y){ // == is in the next IF
+
+                leftDownNode.upper = rightUpNode;
+                rightUpNode.lower = leftDownNode; //already done
+                rightUpNode.upper = leftUpNode;
+                leftUpNode.lower = rightUpNode;
+
+            }
+
+
+            if( (brickHeight + leftDownNode.position.y) == rightUpNode.position.y){ //si tienen la misma altura es que son el mismo nodo y no hace falta añadirlo al global list. se borra todo lo hecho anteriormente
+                        
+                leftUpNode = rightUpNode;
+
+            }
+            else{
+                m_GlobalNodeList.push(leftUpNode);
+            }
+
+            nextNodeFloorList.push(leftUpNode);
+
+
+
+                        
+            // //update links (MIRAR DE TENER EN CUENTA EL CRASH)
+
+            // if( (brickHeight + leftDownNode.position.y) > rightUpNode.position.y){ //si esta mas alto
+
+            //     leftUpNode.lower = rightUpNode;
+            //     rightUpNode.lower = leftDownNode; //rememeber we still have the last rightUpNode
+            //     rightUpNode.upper = leftUpNode;
+            //     leftDownNode.upper = rightUpNode;
+            // }
+            // else{ // si es mas bajo
+
+
+            //     leftUpNode.lower = rightDownNode; // or leftdownnode
+            //     leftUpNode.upper = rightUpNode; 
+
+            //     rightUpNode.lower = leftUpNode; //rememeber we still have the last rightUpNode
+            //     rightUpNode.upper = null;
+
+            //     leftDownNode.upper = leftUpNode;
+
+            // }
 
 
         }
@@ -275,7 +362,7 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         rightUpNode = new WallNode(position, null, null, null, leftUpNode);
             
         m_GlobalNodeList.push(rightUpNode);
-        m_NodeFloorList.push(rightUpNode);
+        nextNodeFloorList.push(rightUpNode);
 
         //rightdown (3)
 
@@ -298,19 +385,24 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         if(firstBrick){
             firstBrick = false;
         }
-        else{
-            index ++;
-            index ++; //+2 porque hemos de passar al otro techo? ?
+        if(crash){
+            crash = false;
         }
+        // if(nextNode.position.x <= traveled ){
+        //     console.log(index);
+        //     index ++;
+        //     index ++; //+2 porque hemos de passar al otro ladrillo techo
+        // }
 
-        crash = false;
         TEMPORAL++;
     }
 
+    //Actualizar m_NodeFloorList
+    m_NodeFloorList = nextNodeFloorList;
 
-    //Empezar desde la mitad de el primer ladrillo... (?)
+    //peak = 0;
 
     //Rellenar huecos con teselación
 
-    //Actualizar m_NodeFloorList
+    
 }

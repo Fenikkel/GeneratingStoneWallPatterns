@@ -11,7 +11,7 @@ var m_OkButton = document.getElementById("okBtn");
 
 //Global variables
 var m_GlobalNodeList = []; //Orden insercion ladrillo. 1: DonwLeft, 2: UpLeft, 3: UpRight, 4: DownRight
-var m_NodeFloorList = [];
+var m_NodeFloorList = []; //The two upper nodes of the brick. If two bricks have the same size and  are below, they are sharing a node in the m_GlobalNodeList, but here NOT. Because indexing. We advance in the m_NodeFloorList in pairs
 var m_Index = 0;
 
 var m_AverageBrickWidth = parseInt(m_BrickWidthInput.value); //si no lo convertimos a numero nos dara valores raros
