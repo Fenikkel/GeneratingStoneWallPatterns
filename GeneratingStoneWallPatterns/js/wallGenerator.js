@@ -2,7 +2,7 @@
 function makeWallJointPattern(){
 
     firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    //nextRow(0, m_CanvasWidth, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    nextRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
 }
 
@@ -153,6 +153,9 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
     var crash = false;
 
     var peak = 0;
+    var peakNode;
+    var nextPeakNode;
+
 
     var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor)
     
@@ -177,7 +180,7 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         //UPDATE TRAVELED
 
         if(firstBrick){ //fisrt brick always be the half of the previous first brick
-            traveled = nextNode.position.x / 2;
+            traveled = (nextNode.position.x + wallInit) / 2;
         }
         else{
             traveled += brickWidth;
@@ -196,28 +199,34 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         peak = nextNode.position.y;//reset peak
         while(traveled > nextNode.position.x){ //find the last piece of roof
 
-            console.log("HI");
+            console.log("Iterations");
             if(nextNode.position.y > peak){ //and save the most peak altitude
+
                 peak = nextNode.position.y;
+
+                peakNode = currentNode; //guardamos los nodos que representan el techo mas alto 
+                nextPeakNode = nextNode;
+
                 crash = true;
                 console.log("PEAKED");
 
             }
 
+            //update current and next node
             index += 2;
 
             currentNode = m_NodeFloorList[index];
             nextNode = m_NodeFloorList[index + 1];
 
-            console.log(currentNode);
-            console.log(nextNode);
+            console.log("currentNode.position.x = " + currentNode.position.x);
+            console.log("nextNode.position.x = " +nextNode.position.x);
 
-            console.log("TRAVELED: " + traveled);
-            console.log(nextNode.position.x);
-
+            console.log("traveled = " + traveled);
 
 
 
+
+            //Se supone que aqui no debe llegar nunca pero por si acaso
             if ( index >= m_NodeFloorList.lenght){ //if traveled is greater than last floor means that we pass the right boundary
                 index = m_NodeFloorList.lenght-1;
                 console.log("BREAK!");
@@ -252,7 +261,7 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
             
             
             //leftup (1)
-            position = new Position(wallInit, brickHeight + leftDownNode.position.y);
+            position = new Position(wallInit, brickHeight + leftDownNode.position.y); // wallInit o leftdownnode.position.x
             leftUpNode = new WallNode(position, null, leftDownNode, null, null);
             m_GlobalNodeList.push(leftUpNode);
             nextNodeFloorList.push(leftUpNode);
@@ -265,9 +274,34 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
             //leftdown (0)
 
             if(crash){ //estara encima del siguiente ladrillo
-                position = new Position(rightDownNode.position.x, nextNode.upper.position.y);
+
+                position = new Position(rightDownNode.position.x, peakNode.position.y);
                 leftDownNode = new WallNode(position, null, null, null, null);
-                m_GlobalNodeList.push(leftDownNode);
+
+                if(rightUpNode.position.y == peakNode.position.y){ //Si toca con el vertice del anterior ladrillo..
+
+                    leftDownNode = rightUpNode;
+                    //AQUI CERRAMOS UN ESPACIO. SE HA FORMADO UN LADRILLO O TOCARA PROCESARLO? (puede que no tenga forma rectangular)
+
+                }
+                else if(rightUpNode.position.y > peakNode.position.y ){ //si toca la pared del vertice anterior
+
+                    leftDownNode.lower = rightDownNode;
+                    rightDownNode.upper = leftDownNode;
+                    leftDownNode.upper = rightUpNode;
+                    rightUpNode.lower = leftDownNode;
+
+                    m_GlobalNodeList.push(leftDownNode);
+
+                    //AQUI CERRAMOS UN ESPACIO. SE HA FORMADO UN LADRILLO O TOCARA PROCESARLO? (puede que no tenga forma rectangular)
+
+                }
+                else{ //si no toca creamos un nuevo vertice (rightUpNode.position.y < peakNode.position.y )
+
+                    m_GlobalNodeList.push(leftDownNode);
+                }
+
+
             }
             else{ //estara encima del mismo ladrillo que el anterior
                 leftDownNode = rightDownNode; //our last rightDownNode
