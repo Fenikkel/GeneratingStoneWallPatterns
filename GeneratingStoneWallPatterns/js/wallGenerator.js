@@ -240,18 +240,6 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
 
 
 
-
-
-
-
-        // if(traveled > nextNode.position.x && nextNode.upper != null){ //si no es null significa que el siguiente techo esta mas arriba con lo que xocara
-
-        //     crash = true;
-
-        // }
-
-
-
         //SET LEFT SIDE JOINTS
 
         if(firstBrick){ //First brick
@@ -311,15 +299,18 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
             //leftup (1)
 
             if(crash){
-                position = new Position(rightDownNode.position.x, nextNode.upper.position.y + brickHeight);
-            }
-            else{ //si no ha chocado y es mas pequeño..
-                position = new Position(leftDownNode.position.x, brickHeight + leftDownNode.position.y);
-            }
-            
-            leftUpNode = new WallNode(position, null, null, null, null);
+                position = new Position(rightDownNode.position.x, peakNode.position.y + brickHeight);
 
-            if(leftUpNode.position.y < rightUpNode.position.y){
+            }
+            else{ //si no ha chocado
+                position = new Position(leftDownNode.position.x, brickHeight + leftDownNode.position.y);
+                
+            }
+            leftUpNode = new WallNode(position, null, null, null, null);
+            
+            
+
+            if(leftUpNode.position.y < rightUpNode.position.y){ //caso menor (sirve para el caso extraño de crash tambien)
 
                 rightUpNode.upper = null;
                 rightUpNode.lower = leftUpNode;
@@ -328,17 +319,25 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
                 leftDownNode.upper = leftUpNode;
 
             }
-            else if(leftUpNode.position.y > rightUpNode.position.y){ // == is in the next IF
+            else if(leftUpNode.position.y > rightUpNode.position.y && rightUpNode.position.y > leftDownNode.position.y){ //  caso rightUpNode entre leftup y leftdown
 
                 leftDownNode.upper = rightUpNode;
-                rightUpNode.lower = leftDownNode; //already done
+                rightUpNode.lower = leftDownNode; //Puede que no lo sea
                 rightUpNode.upper = leftUpNode;
                 leftUpNode.lower = rightUpNode;
+                //leftUpNode.upper = null;
+
+            }
+            else if(leftUpNode.position.y > rightUpNode.position.y && rightUpNode.position.y < leftDownNode.position.y){ //caso no se tocan los ladrillos
+
+                leftDownNode.upper = rightUpNode;
+                leftUpNode.lower = rightUpNode;
+                //rightUpNode.upper = null;
 
             }
 
 
-            if( (brickHeight + leftDownNode.position.y) == rightUpNode.position.y){ //si tienen la misma altura es que son el mismo nodo y no hace falta añadirlo al global list. se borra todo lo hecho anteriormente
+            if( (leftUpNode.position.y) == rightUpNode.position.y){ //si tienen la misma altura es que son el mismo nodo y no hace falta añadirlo al global list. se borra todo lo hecho anteriormente si ha llegado a colarse
                         
                 leftUpNode = rightUpNode;
 
@@ -349,36 +348,7 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
 
             nextNodeFloorList.push(leftUpNode);
 
-
-
-                        
-            // //update links (MIRAR DE TENER EN CUENTA EL CRASH)
-
-            // if( (brickHeight + leftDownNode.position.y) > rightUpNode.position.y){ //si esta mas alto
-
-            //     leftUpNode.lower = rightUpNode;
-            //     rightUpNode.lower = leftDownNode; //rememeber we still have the last rightUpNode
-            //     rightUpNode.upper = leftUpNode;
-            //     leftDownNode.upper = rightUpNode;
-            // }
-            // else{ // si es mas bajo
-
-
-            //     leftUpNode.lower = rightDownNode; // or leftdownnode
-            //     leftUpNode.upper = rightUpNode; 
-
-            //     rightUpNode.lower = leftUpNode; //rememeber we still have the last rightUpNode
-            //     rightUpNode.upper = null;
-
-            //     leftDownNode.upper = leftUpNode;
-
-            // }
-
-
-        }
-
-
-        
+        }  
 
         //SET RIGHT SIDE JOINTS
 
@@ -386,35 +356,74 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
 
         //rightup (2)
 
-        if(crash){
-            position = new Position(traveled, brickHeight + nextNode.upper.position.y);
-        }
-        else{
-            position = new Position(traveled, brickHeight + leftDownNode.position.y);
-        }
+        position = new Position(traveled, leftUpNode.position.y)
 
         rightUpNode = new WallNode(position, null, null, null, leftUpNode);
             
+        //en realidad cada vez que queremos hacer push deberiamos mirar si ya hay alguno con la misma posicion que el que queremos meter...
         m_GlobalNodeList.push(rightUpNode);
         nextNodeFloorList.push(rightUpNode);
 
+        //if da la casualidad que choca justo con uno mas alto que donde nos estamos apoyando, se comparte nodo o hay que poner unos nodos al upper and down...
+
         //rightdown (3)
 
-        if(crash){
-            position = new Position(traveled, nextNode.upper.position.y);      
-        }
-        else{
-            position = new Position(traveled, leftDownNode.position.y);
-        }
+        position = new Position(traveled, leftDownNode.position.y);
 
         rightDownNode = new WallNode(position, rightUpNode, null, null, leftDownNode);
 
-        m_GlobalNodeList.push(rightDownNode);
+         if(crash){
+            if(rightDownNode.position.x > nextPeakNode.position.x){ // se pasa
+                //do nothing
+                m_GlobalNodeList.push(rightDownNode);
+            }
+            else if(rightDownNode.position.x < nextPeakNode.position.x){ // no se pasa
+                
+                rightUpNode.lower = rightDownNode;
+                rightDownNode.right =  nextPeakNode;
+                nextPeakNode.left = rightDownNode;
+                peakNode.right = rightDownNode;
+                rightDownNode.left = peakNode;
+                // peakNode.left = leftDownNode; // se supone que ya esta puesto
+                // leftDownNode.right = peakNode; 
 
-        //update links
-        leftUpNode.right = rightUpNode;
-        rightUpNode.lower = rightDownNode;
-        leftDownNode.right = rightDownNode;
+                m_GlobalNodeList.push(rightDownNode);
+
+            }
+            else{ // es igual
+                rightDownNode = nextPeakNode;
+                rightDownNode.upper = rightUpNode;
+                rightUpNode.lower = rightDownNode;
+            }
+        }
+        else{
+
+            if(rightDownNode.position.x > nextNode.position.x){ // se pasa
+                //do nothing
+                m_GlobalNodeList.push(rightDownNode);
+
+            }
+            else if(rightDownNode.position.x < nextNode.position.x){ //no se pasa
+
+                rightUpNode.lower = rightDownNode;
+                rightDownNode.right =  nextNode;
+                nextNode.left = rightDownNode;
+                currentNode.right = rightDownNode;
+                rightDownNode.left = currentNode;
+                // peakNode.left = leftDownNode; // se supone que ya esta puesto
+                // leftDownNode.right = peakNode; 
+
+                m_GlobalNodeList.push(rightDownNode);
+
+            }
+            else{
+                rightDownNode = nextNode;
+                rightDownNode.upper = rightUpNode;
+                rightUpNode.lower = rightDownNode;
+            }
+
+        }
+
         
         if(firstBrick){
             firstBrick = false;
@@ -422,11 +431,6 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         if(crash){
             crash = false;
         }
-        // if(nextNode.position.x <= traveled ){
-        //     console.log(index);
-        //     index ++;
-        //     index ++; //+2 porque hemos de passar al otro ladrillo techo
-        // }
 
         TEMPORAL++;
     }
