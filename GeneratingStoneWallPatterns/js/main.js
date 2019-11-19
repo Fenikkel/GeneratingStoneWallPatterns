@@ -5,8 +5,32 @@
   
   try {
 
-    processWall();
+    //processWall();
 
+    // var bolea = isPointWithinTheLine(9, 1, 4, 1, 6, 1);
+    // console.log("Resultat: " + bolea);
+
+    /*
+    var position = new Position(5, 1);
+    var node = new WallNode(position, null, null, null, null);
+
+    var position2 = new Position(10, 1);
+
+    var startNode = new WallNode(position2, null, null, null, null);
+
+    var position3 = new Position(1, 1);
+
+    var endNode = new WallNode(position3, null, null, null, null);
+
+    var edge = new Edge(startNode, endNode, null, null);
+
+    var bolea = isNodeWithinTheEdge(node, edge);
+    console.log("Resultat: " + bolea);
+
+    */
+
+
+    /*
     //Debug global list
     console.log("Total number of nodes = " + m_GlobalNodeList.length);
     var edges = 0;
@@ -51,6 +75,7 @@
     }
 
     console.log("Total number of floor edges = " + floorEdges);
+  */
 
   }
   catch(error) {
