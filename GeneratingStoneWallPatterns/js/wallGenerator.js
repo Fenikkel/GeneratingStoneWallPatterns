@@ -1,6 +1,11 @@
 
 function makeWallJointPattern(){
 
+    m_GlobalNodeList.length = 0; //clear the array
+    m_NodeFloorList.length = 0;
+    m_GlobalEdgeList.length = 0;
+    m_GlobalBrickList.length = 0;
+
     // firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     // //nextRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
@@ -10,7 +15,10 @@ function makeWallJointPattern(){
 
     firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
-    console.log(m_GlobalEdgeList);
+    //console.log(m_GlobalEdgeList);
+    console.log(m_NodeFloorList);
+    console.log(m_GlobalNodeList);
+
 
 
 }
@@ -692,7 +700,7 @@ function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeigh
             var previousRightUpNode = m_GlobalNodeList[m_GlobalNodeList.length - 2]; //rightUpNode
 
             var previousBrickEdge = searchEdgeFromStartNode(rightDownNode);
-            console.log(previousBrickEdge);
+            //console.log(previousBrickEdge);
 
             
             if(previousRightUpNode.position.y == leftUpNode.position.y){ //same node (rare case)
@@ -748,21 +756,27 @@ function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeigh
 
         //rightup (2)
         position = new Position(traveled, brickHeight);
-        rightUpNode = new WallNode(position, null, null, null, leftUpNode);
+        rightUpNode = new WallNode(position, null, null, null, null);
         m_GlobalNodeList.push(rightUpNode);
         m_NodeFloorList.push(rightUpNode);
 
         //rightdown (3)
         position = new Position(traveled, 0);
-        rightDownNode = new WallNode(position, rightUpNode, null, null, leftDownNode);
+        rightDownNode = new WallNode(position, null, null, null, null);
         m_GlobalNodeList.push(rightDownNode);
 
         //update links
-        rightUpNode.lower = rightDownNode;
-        leftUpNode.right = rightUpNode;
-        leftDownNode.right = rightDownNode;
+        updateVerticalNeighbors(rightDownNode,rightUpNode);
+        updateHorizontalNeighbors(leftDownNode, rightDownNode);
+        updateHorizontalNeighbors(leftUpNode, rightUpNode);
 
-        edge = new Edge(rightDownNode,rightUpNode, null, 0);
+        edge = new Edge(rightDownNode, rightUpNode, null, 0);
+        m_GlobalEdgeList.push(edge);
+
+        edge = new Edge(leftDownNode, rightDownNode, null, 0);
+        m_GlobalEdgeList.push(edge);
+
+        edge = new Edge(leftUpNode, rightUpNode, null, 0);
         m_GlobalEdgeList.push(edge);
 
         if(firstBrick){

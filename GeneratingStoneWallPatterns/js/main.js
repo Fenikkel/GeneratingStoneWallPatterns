@@ -88,8 +88,6 @@
 
     m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
 
-    m_GlobalNodeList.length = 0; //clear the array
-    m_NodeFloorList.length = 0;
     
     makeWallJointPattern();
       
