@@ -4,8 +4,8 @@ function isPointWithinTheLine(startLineX, startLineY, endLineX, endLineY, pointX
 
     if( (pointX == startLineX && pointY == startLineY) || (pointX == endLineX && pointY == endLineY) ){ // if it's the same point...
 
-        console.error("This point already exist in the edge list.");
-        return true; //The point lies on the line
+        console.warn("This point already exist in the edge list.");
+        return false; //The point lies on the end of the line
 
     }
 
@@ -29,8 +29,8 @@ function isPointWithinTheLine(startLineX, startLineY, endLineX, endLineY, pointX
         
         var calculatedY = m * pointX + b;
 
-        console.log("CalculatedY: " + calculatedY);
-        console.log("PointY: " + pointY);
+        // console.log("CalculatedY: " + calculatedY);
+        // console.log("PointY: " + pointY);
 
         if (pointY == calculatedY){
 
@@ -61,8 +61,8 @@ function isNodeWithinTheEdge(node, edge){
 
     if( (node.position.x == edge.startNode.position.x && node.position.y == edge.startNode.position.y) || (node.position.x == edge.endNode.position.x  && node.position.y == edge.endNode.position.y) ){ // if it's the same point...
 
-        console.error("This point already exist in the edge list.");
-        return true; //The point lies on the line
+        console.warn("This point already exist in the edge list.");
+        return false; //The point lies on the end of the line
 
     }
 
@@ -86,8 +86,8 @@ function isNodeWithinTheEdge(node, edge){
         
         var calculatedY = m * node.position.x + b;
 
-        console.log("CalculatedY: " + calculatedY);
-        console.log("PointY: " + node.position.y);
+        // console.log("CalculatedY: " + calculatedY);
+        // console.log("PointY: " + node.position.y);
 
         if (node.position.y == calculatedY){
 

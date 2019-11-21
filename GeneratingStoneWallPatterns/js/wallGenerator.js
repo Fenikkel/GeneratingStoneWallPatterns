@@ -1,13 +1,16 @@
 
 function makeWallJointPattern(){
 
-    firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    //nextRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // //nextRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
+    firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+
+    console.log(m_GlobalEdgeList);
 
 
 }
@@ -617,4 +620,208 @@ function tetris(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, nois
     paintFloor();
 
     
+}
+
+function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
+
+    var wallWidth = wallFinal;// - wallInit;
+
+    var position;
+    var leftDownNode;
+    var leftUpNode;
+    var rightDownNode;
+    var rightUpNode;
+
+    var edge;
+    var alternativeedge;
+
+    var firstBrick = true;;
+
+
+    var brickWidth = 0;
+    var brickHeight = 0;
+
+    var traveled = wallInit;
+
+    while(traveled < wallWidth){
+
+        if(noise >= 1){
+            noise = 0.99; //Evade invisible bricks and noise excess
+        }
+
+        //random * (max - min) + min;
+        brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
+        brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
+
+        //SET LEFT SIDE JOINTS
+
+        if(firstBrick){ //If its the first brick...
+
+            //leftdown (0)
+            position = new Position(wallInit, 0);
+            leftDownNode = new WallNode(position, null, null, null, null);
+            m_GlobalNodeList.push(leftDownNode);
+
+            //leftup (1)
+            position = new Position(wallInit, brickHeight);
+            leftUpNode = new WallNode(position, null, leftDownNode, null, null);
+            m_GlobalNodeList.push(leftUpNode);
+            m_NodeFloorList.push(leftUpNode);
+
+            //update links
+            leftDownNode.upper = leftUpNode;
+
+            //create left edge
+            edge = new Edge(leftDownNode, leftUpNode, null, 0);
+            m_GlobalEdgeList.push(edge);
+            
+        }
+        else{
+
+            //leftdown (0)
+            leftDownNode = m_GlobalNodeList[m_GlobalNodeList.length - 1]; //rightDownNode
+            
+            //leftup (1)
+            position = new Position(leftDownNode.position.x, leftDownNode.position.y + brickHeight);
+            leftUpNode = new WallNode(position, null, null, null, null);
+
+            
+            
+
+            //update links
+            var previousRightUpNode = m_GlobalNodeList[m_GlobalNodeList.length - 2]; //rightUpNode
+
+            var previousBrickEdge = searchEdgeFromStartNode(rightDownNode);
+            console.log(previousBrickEdge);
+
+            
+            if(previousRightUpNode.position.y == leftUpNode.position.y){ //same node (rare case)
+
+                leftUpNode = previousRightUpNode;
+
+                //the edge and the nodes are already in the global list
+
+            }
+            else if(isNodeWithinTheEdge(leftUpNode, previousBrickEdge)){ //previous brick bigger than current brick case
+
+                updateVerticalNeighbors(leftDownNode,leftUpNode);
+                updateVerticalNeighbors(leftUpNode, previousRightUpNode);
+
+                insertNodeInTheEdge(leftUpNode, previousBrickEdge);
+
+                m_GlobalNodeList.push(leftUpNode);
+
+            }
+            else{ //previous brick smaller than current brick case
+
+                updateVerticalNeighbors(leftDownNode,previousRightUpNode);
+                updateVerticalNeighbors(previousRightUpNode,leftUpNode);
+
+                edge = new Edge(previousRightUpNode, leftUpNode, null, 0);
+                m_GlobalEdgeList.push(edge);
+
+                m_GlobalNodeList.push(leftUpNode);
+
+            }
+
+            //update arrays
+
+            //leftDownNode and leftUpNode are already in the global node list
+            m_NodeFloorList.push(leftUpNode); //The array accept repeted
+        }
+
+
+        //CHECK RIGHT BOUNDARY
+        traveled += brickWidth;
+
+        if(traveled > wallWidth){ // si el ladrillo sobrepasa el tamaño del muro, lo ajustamos
+
+            var surplus = traveled - wallWidth;
+            brickWidth -= surplus;
+            traveled -= surplus;
+            //traveled seria igual que wallWidth con lo que esta seria la ultima iteracion del bucle
+        }
+
+        //SET RIGHT SIDE JOINTS
+
+
+
+        //rightup (2)
+        position = new Position(traveled, brickHeight);
+        rightUpNode = new WallNode(position, null, null, null, leftUpNode);
+        m_GlobalNodeList.push(rightUpNode);
+        m_NodeFloorList.push(rightUpNode);
+
+        //rightdown (3)
+        position = new Position(traveled, 0);
+        rightDownNode = new WallNode(position, rightUpNode, null, null, leftDownNode);
+        m_GlobalNodeList.push(rightDownNode);
+
+        //update links
+        rightUpNode.lower = rightDownNode;
+        leftUpNode.right = rightUpNode;
+        leftDownNode.right = rightDownNode;
+
+        edge = new Edge(rightDownNode,rightUpNode, null, 0);
+        m_GlobalEdgeList.push(edge);
+
+        if(firstBrick){
+
+            firstBrick = false;
+
+        }
+
+    }
+    paintFloor(); // pinta el techo m_NodeFloorList
+
+}
+
+function updateVerticalNeighbors(lowerNode, upperNode){
+
+    lowerNode.upper = upperNode;
+    upperNode.lower = lowerNode;
+
+}
+
+function updateHorizontalNeighbors(leftNode, rightNode){
+
+    leftNode.right = rightNode;
+    rightNode.left = leftNode;
+
+}
+
+function insertNodeInTheEdge(node, edge){
+
+    var firstEdge = new Edge(edge.startNode, node, null, 0);
+    var secondEdge = new Edge(node, edge.endNode, null, 0);
+
+    for (var i = m_GlobalEdgeList.length - 1 ; i >= 0 ; i--) {
+        if (m_GlobalEdgeList[i] == edge) {
+            m_GlobalEdgeList.splice(i, 1);
+            break;       //<-- comment  if all the same elements has to be removed
+        }
+    }
+
+    //m_GlobalEdgeList = m_GlobalEdgeList.filter(e => e !== edge); //quita edge pero de una forma menos eficiente?
+
+
+    m_GlobalEdgeList.push(firstEdge, secondEdge);
+}
+
+function searchEdgeFromStartNode(startNode){
+
+    var lowerNode; 
+    var edge;
+    
+    for (let index = 0; index < m_GlobalEdgeList.length; index++) {
+        lowerNode = m_GlobalEdgeList[index].startNode;
+
+        if(startNode == lowerNode){
+            edge = m_GlobalEdgeList[index];
+            break;
+        }
+        
+    }
+
+    return edge;
 }
