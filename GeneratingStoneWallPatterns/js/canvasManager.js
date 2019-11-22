@@ -4,38 +4,51 @@ var colorIndex = 0;
 
 function paintWall(){
 
-
-
     m_Context.beginPath();
+
+    var y = 0;
     
     var currentNode;
     for(var index = 0; index < m_GlobalNodeList.length ; index ++){
 
         currentNode = m_GlobalNodeList[index];
 
-        m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+        y = m_CanvasHeight - currentNode.position.y;
+
+        m_Context.moveTo(currentNode.position.x, y);
 
         if(currentNode.upper != null){
-            m_Context.lineTo(currentNode.upper.position.x ,currentNode.upper.position.y);
+
+            y = m_CanvasHeight - currentNode.upper.position.y;
+            m_Context.lineTo(currentNode.upper.position.x , y);
         }
 
-        m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+        y = m_CanvasHeight - currentNode.position.y;
 
-        if(currentNode.lower != null){
-            m_Context.lineTo(currentNode.lower.position.x ,currentNode.lower.position.y);
-        }
+        m_Context.moveTo(currentNode.position.x, y);
 
-        m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+        // if(currentNode.lower != null){
+        //     y = m_CanvasHeight - currentNode.lower.position.y;
+        //     m_Context.lineTo(currentNode.lower.position.x ,y);
+        // }
+
+        // y = m_CanvasHeight - currentNode.position.y;
+
+        // m_Context.moveTo(currentNode.position.x, y);
 
         if(currentNode.right != null){
-            m_Context.lineTo(currentNode.right.position.x ,currentNode.right.position.y);
+            y = m_CanvasHeight - currentNode.right.position.y;
+            m_Context.lineTo(currentNode.right.position.x , y);
         }
 
-        m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+        y = m_CanvasHeight - currentNode.position.y;
 
-        if(currentNode.left != null){
-            m_Context.lineTo(currentNode.left.position.x ,currentNode.left.position.y);
-        }
+        // m_Context.moveTo(currentNode.position.x, y);
+
+        // if(currentNode.left != null){
+        //     y = m_CanvasHeight - currentNode.left.position.y;
+        //     m_Context.lineTo(currentNode.left.position.x ,y);
+        // }
 
     }
     
@@ -57,21 +70,26 @@ function paintFloor(){
     m_Context.beginPath();
     m_Context.lineWidth = 2;
 
+    var y;
     var currentNode;
     for(var index = 0; index < m_NodeFloorList.length ; index ++){
 
         currentNode = m_NodeFloorList[index];
 
-        m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+        y = m_CanvasHeight - currentNode.position.y;
+        m_Context.moveTo(currentNode.position.x, y);
 
         if(currentNode.right != null){
-            m_Context.lineTo(currentNode.right.position.x ,currentNode.right.position.y);
+            y = m_CanvasHeight - currentNode.right.position.y;
+            m_Context.lineTo(currentNode.right.position.x ,y);
         }
 
-        m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+        y = m_CanvasHeight - currentNode.position.y;
+        m_Context.moveTo(currentNode.position.x, y);
 
         if(currentNode.left != null){
-            m_Context.lineTo(currentNode.left.position.x ,currentNode.left.position.y);
+            y = m_CanvasHeight - currentNode.left.position.y;  
+            m_Context.lineTo(currentNode.left.position.x , y);
         }
 
     }
@@ -92,29 +110,30 @@ function paintBricks(){
 
         currentBrick = m_GlobalBrickList[index];
 
-        for (var i = 0; i < 4; i++) {
+        // for (var i = 0; i < 4; i++) {
 
-            switch (i) {
-                case 0:
-                    currentNode = currentBrick.leftDownNode;
-                    break;
-                case 1:
-                    currentNode = currentBrick.leftUpNode;
-                    break;
+            // switch (i) {
+            //     case 0:
+            //         currentNode = currentBrick.leftDownNode;
+            //         break;
+            //     case 1:
+            //         currentNode = currentBrick.leftUpNode;
+            //         break;
             
-                case 2:
-                    currentNode = currentBrick.rightDownNode;
-                    break;
+            //     case 2:
+            //         currentNode = currentBrick.rightDownNode;
+            //         break;
 
-                case 3:
-                    currentNode = currentBrick.rightUpNode;
-                    break;
+            //     case 3:
+            //         currentNode = currentBrick.rightUpNode;
+            //         break;
                 
-                default:
-                    break;
-            }
+            //     default:
+            //         break;
+            // }
                     
-
+            currentNode = currentBrick.leftDownNode;
+            
             m_Context.moveTo(currentNode.position.x,currentNode.position.y);
 
             if(currentNode.right != null){
@@ -123,14 +142,16 @@ function paintBricks(){
 
             m_Context.moveTo(currentNode.position.x,currentNode.position.y);
 
-            if(currentNode.left != null){
-                m_Context.lineTo(currentNode.left.position.x ,currentNode.left.position.y);
-            }
-
-            m_Context.moveTo(currentNode.position.x,currentNode.position.y);
-
             if(currentNode.upper != null){
                 m_Context.lineTo(currentNode.upper.position.x ,currentNode.upper.position.y);
+            }
+
+            currentNode = currentBrick.rightUpNode;
+            
+            m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+
+            if(currentNode.left != null){
+                m_Context.lineTo(currentNode.left.position.x ,currentNode.left.position.y);
             }
 
             m_Context.moveTo(currentNode.position.x,currentNode.position.y);
@@ -139,7 +160,7 @@ function paintBricks(){
                 m_Context.lineTo(currentNode.lower.position.x ,currentNode.lower.position.y);
             }
             
-        }
+        //}
 
     }
     

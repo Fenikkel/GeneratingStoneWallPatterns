@@ -14,10 +14,12 @@ function makeWallJointPattern(){
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
     firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-
+    tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    
     //console.log(m_GlobalEdgeList);
-    console.log(m_NodeFloorList);
-    console.log(m_GlobalNodeList);
+    //console.log(m_NodeFloorList);
+    //console.log(m_GlobalNodeList);
 
 
 
@@ -219,7 +221,6 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
         nextPeakNode = nextNode;
         while(traveled > nextNode.position.x){ //find the last piece of roof
 
-            console.log("Iterations");
             if(nextNode.position.y > peak){ //and save the most peak altitude
 
                 peak = nextNode.position.y;
@@ -228,7 +229,6 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
                 nextPeakNode = nextNode;
 
                 crash = true;
-                console.log("PEAKED");
 
             }
 
@@ -238,10 +238,10 @@ function nextRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noi
             currentNode = m_NodeFloorList[index];
             nextNode = m_NodeFloorList[index + 1];
 
-            console.log("currentNode.position.x = " + currentNode.position.x);
-            console.log("nextNode.position.x = " +nextNode.position.x);
+            // console.log("currentNode.position.x = " + currentNode.position.x);
+            // console.log("nextNode.position.x = " +nextNode.position.x);
 
-            console.log("traveled = " + traveled);
+            // console.log("traveled = " + traveled);
 
 
 
@@ -544,10 +544,9 @@ function tetris(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, nois
         //console.log(m_NodeFloorList);
         while(traveled > nextFinalNode.position.x && index < m_NodeFloorList.length - 1){ //find the last piece of roof
     
-            console.log(traveled);
-            console.log(nextFinalNode.position.x);
+            // console.log(traveled);
+            // console.log(nextFinalNode.position.x);
 
-            console.log("Iterations");
 
             //update current and next node
             index += 2;
@@ -563,7 +562,7 @@ function tetris(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, nois
                 nextPeakNode = nextFinalNode;
     
                 crash = true;
-                console.log("PEAKED");
+
     
             }
     
@@ -617,10 +616,8 @@ function tetris(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, nois
 
         m_GlobalBrickList.push(brick);
 
-        TEMPORAL++;
+        //TEMPORAL++;
         lastXPosition = traveled;
-
-        console.log("temporalñ");
         
     }
 
@@ -788,6 +785,286 @@ function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeigh
     }
     paintFloor(); // pinta el techo m_NodeFloorList
 
+}
+
+function tetrisEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
+
+    
+    var wallWidth = wallFinal;
+
+    var brick;
+    var position;
+    var edge;
+    var leftDownNode;
+    var leftUpNode;
+    var rightDownNode;
+    var rightUpNode;
+
+    var brickWidth = 0;
+    var brickHeight = 0;
+
+    var traveled = wallInit;
+    var firstBrick = true;
+
+    var index = 0; //node floor list index
+    var crash = false;
+
+    var firstNode = m_NodeFloorList[index];
+    var nextFirstNode =m_NodeFloorList[index + 1];
+    var firstNodeIndex = 0;
+
+    var peak = 0;
+    var peakNode = m_NodeFloorList[index];
+    var nextPeakNode = m_NodeFloorList[index + 1];
+    var peakNodeIndex = 0;
+
+
+    var finalNode = m_NodeFloorList[index];
+    var nextFinalNode =m_NodeFloorList[index + 1];
+    var finalNodeIndex = 0;
+
+    var lastXPosition = wallInit;
+
+
+    var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor) 
+    
+    var TEMPORAL=0;
+
+
+    while(traveled < wallWidth){//traveled < wallWidth){ //TEMPORAL < 6){
+
+        if(noise >= 1){
+            noise = 0.99; //Evade invisible bricks and noise excess
+        }
+
+        //random * (max - min) + min;
+        brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
+        brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
+    
+
+        //UPDATE TRAVELED
+
+        traveled += brickWidth;
+
+        //CHECK RIGHT BOUNDARY
+
+        if(traveled > wallWidth){ // if traveled is greater than the wall width, we adjust it
+        
+            var surplus = traveled - wallWidth;
+            brickWidth -= surplus;
+            traveled -= surplus;
+            //traveled seria igual que wallWidth con lo que esta seria la ultima iteracion del bucle
+        }
+
+        firstNode = m_NodeFloorList[index]; //puede que de error si estamos tocando solo la puntita del floor. 
+        nextFirstNode = m_NodeFloorList[index + 1];
+        firstNodeIndex = index;
+
+        finalNode = m_NodeFloorList[index];
+        nextfinalNode = m_NodeFloorList[index + 1];
+        finalNodeIndex = index;
+
+        peak = firstNode.position.y;//reset peak
+        peakNode = m_NodeFloorList[index]; 
+        nextPeakNode = m_NodeFloorList[index + 1];
+        peakNodeIndex = index;
+
+        //FirstNode apuntara al primer techo, peakNode apuntara al techo mas alto y finalNode apuntara al ultimo techo abarcado
+        //console.log(m_NodeFloorList);
+        while(traveled > nextFinalNode.position.x && index < m_NodeFloorList.length - 1){ //find the last piece of roof
+    
+            // console.log(traveled);
+            // console.log(nextFinalNode.position.x);
+
+
+            //update current and next node
+            index += 2;
+    
+            finalNode = m_NodeFloorList[index];
+            nextFinalNode = m_NodeFloorList[index + 1];
+            finalNodeIndex = index;
+
+            if(nextFinalNode.position.y > peak){ //and save the most peak altitude
+    
+                peak = nextFinalNode.position.y;
+    
+                peakNode = finalNode; //guardamos los nodos que representan el techo mas alto 
+                nextPeakNode = nextFinalNode;
+                peakNodeIndex = index; //index in the floorlist 
+
+                crash = true;
+    
+            }
+    
+
+    
+            // console.log("currentNode.position.x = " + currentNode.position.x);
+            // console.log("nextNode.position.x = " +nextNode.position.x);
+    
+            // console.log("traveled = " + traveled);
+    
+    
+    
+    
+            //Se supone que aqui no debe llegar nunca pero por si acaso
+            if ( index >= m_NodeFloorList.lenght){ //if traveled is greater than last floor means that we pass the right boundary
+                index = m_NodeFloorList.lenght-1;
+                console.log("BREAK!");
+                finalNode = m_NodeFloorList[index];
+                nextFinalNode = m_NodeFloorList[index + 1];
+                finalNodeIndex = index;
+    
+                break;
+            }
+    
+        }
+
+        //Crear piedra
+    
+
+        position = new Position(lastXPosition, peakNode.position.y);
+        leftDownNode = new WallNode(position, null, null, null, null);
+
+        position = new Position(lastXPosition, peakNode.position.y + brickHeight)
+        leftUpNode = new WallNode(position, null, null, null, null);
+
+        position = new Position(traveled, peakNode.position.y + brickHeight)
+        rightUpNode = new WallNode(position, null, null, null, null);
+
+        position = new Position(traveled, peakNode.position.y)
+        rightDownNode = new WallNode(position, null, null, null, null);
+
+        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode, null);
+
+
+        //Left Down Node
+
+        if(firstNode == peakNode){ //if the left part of the brick is touching the first floor
+
+            if(leftDownNode.position.x == firstNode.position.x){ //same node case
+
+                leftDownNode = firstNode;
+    
+            }
+            else if(leftDownNode.position.x == nextFirstNode.position.x){ //same node case
+    
+                console.warn("Mal asunt, el brick quedara flotant en res que el aguante");
+                leftDownNode = nextFirstNode;
+    
+            }
+            else{ //the node is in the middle
+    
+                edge = searchEdgeFromStartNode(firstNode); //get the edge from floor
+                insertNodeInTheEdge(leftDownNode, edge); //divide the edge in two
+
+                //Update links
+                updateHorizontalNeighbors(firstNode, leftDownNode);
+                updateHorizontalNeighbors(leftDownNode, nextFirstNode);
+
+                //Push
+                m_GlobalNodeList.push(leftDownNode);
+                //the new edges are already pushed
+
+            }
+        }
+        else{ //the left part of the brick isn't touching the floor
+
+            edge = new Edge(leftDownNode, peakNode, null, 0);
+
+            //links
+            updateHorizontalNeighbors(leftDownNode, peakNode);
+
+            //push
+            m_GlobalNodeList.push(leftDownNode);
+            m_GlobalEdgeList.push(edge);
+        }
+
+
+        //Left Up Node
+
+        edge = new Edge(leftDownNode, leftUpNode, null, 0);
+
+        //Update links
+        updateVerticalNeighbors(leftDownNode, leftUpNode);
+
+        //Push
+        m_GlobalNodeList.push(leftUpNode);
+        m_GlobalEdgeList.push(edge);
+        nextNodeFloorList.push(leftUpNode);
+
+        
+       
+        //Right down node
+        if(finalNode == peakNode){ //if the right part of the brick is touching the last floor
+        
+            if(rightDownNode.position.x == finalNode.position.x){ //same node case
+
+                console.warn("Mal asunt, el brick quedara flotant en res que el aguante");
+                rightDownNode = finalNode;
+    
+            }
+            else if(rightDownNode.position.x == nextFinalNode.position.x){ //same node case
+    
+                rightDownNode = nextFinalNode;
+    
+            }
+            else{ //the node is in the middle
+    
+                edge = searchEdgeFromStartNode(finalNode); //get the edge from floor
+                insertNodeInTheEdge(rightDownNode, edge); //divide the edge in two
+
+                //Update links
+                updateHorizontalNeighbors(finalNode, rightDownNode);
+                updateHorizontalNeighbors(rightDownNode, nextFinalNode);
+
+                //Push
+                m_GlobalNodeList.push(rightDownNode);
+                //the new edges are already pushed
+
+            }
+        }
+        else{ //the right part of the brick isn't touching the floor
+
+            edge = new Edge(peakNode, rightDownNode, null, 0);
+
+            //links
+            updateHorizontalNeighbors(peakNode, rightDownNode);
+
+            //push
+            m_GlobalNodeList.push(rightDownNode);
+            m_GlobalEdgeList.push(edge);
+        }
+
+        //el caso flotando se cubre con los dos else? SI
+
+        //Right Up Node
+
+        edge = new Edge(rightDownNode, rightUpNode, null, 0);
+
+        //Update links
+        updateVerticalNeighbors(rightDownNode, rightUpNode);
+
+        //Push
+        m_GlobalNodeList.push(rightUpNode);
+        m_GlobalEdgeList.push(edge);
+        nextNodeFloorList.push(rightUpNode);
+
+        //Global Update
+        updateHorizontalNeighbors(leftUpNode, rightUpNode);
+
+        //Global Push
+        m_GlobalBrickList.push(brick);
+
+        //TEMPORAL++;
+        lastXPosition = traveled;
+
+        
+    }
+
+    m_NodeFloorList = nextNodeFloorList;
+    paintFloor();
+
+    
 }
 
 function updateVerticalNeighbors(lowerNode, upperNode){
