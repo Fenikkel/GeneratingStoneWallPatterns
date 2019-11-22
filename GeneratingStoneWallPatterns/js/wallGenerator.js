@@ -957,6 +957,10 @@ function tetrisEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight,
                 edge = searchEdgeFromStartNode(firstNode); //get the edge from floor
                 insertNodeInTheEdge(leftDownNode, edge); //divide the edge in two
 
+                //Update m_NodeFloorList
+                m_NodeFloorList.splice( (firstNodeIndex +1), 0, leftDownNode, leftDownNode);
+                console.log("Ueee");
+                
                 //Update links
                 updateHorizontalNeighbors(firstNode, leftDownNode);
                 updateHorizontalNeighbors(leftDownNode, nextFirstNode);
@@ -1012,6 +1016,10 @@ function tetrisEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight,
     
                 edge = searchEdgeFromStartNode(finalNode); //get the edge from floor
                 insertNodeInTheEdge(rightDownNode, edge); //divide the edge in two
+
+                //Update m_NodeFloorList
+                m_NodeFloorList.splice( (finalNode +1), 0, rightDownNode, rightDownNode);
+                console.log("UAAA");
 
                 //Update links
                 updateHorizontalNeighbors(finalNode, rightDownNode);
