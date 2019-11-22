@@ -14,7 +14,15 @@ function makeWallJointPattern(){
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
     firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     
     //console.log(m_GlobalEdgeList);
@@ -1066,6 +1074,160 @@ function tetrisEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight,
         //TEMPORAL++;
         lastXPosition = traveled;
 
+        
+    }
+
+    m_NodeFloorList = nextNodeFloorList;
+    paintFloor();
+
+    
+}
+
+function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
+
+    
+    var wallWidth = wallFinal;
+
+    var brick;
+    var position;
+    var upperEdge;
+    var lowerEdge;
+    var leftEdge;
+    var rightEdge;
+    var leftDownNode;
+    var leftUpNode;
+    var rightDownNode;
+    var rightUpNode;
+
+    var brickWidth = 0;
+    var brickHeight = 0;
+
+    var traveled = wallInit;
+    var firstBrick = true;
+
+    var index = 0; //node floor list index
+
+    var firstNode = m_NodeFloorList[index];
+    var nextFirstNode =m_NodeFloorList[index + 1];
+
+    var peak = 0;
+    var peakNode = m_NodeFloorList[index];
+    var nextPeakNode = m_NodeFloorList[index + 1];
+
+    var finalNode = m_NodeFloorList[index];
+    var nextFinalNode =m_NodeFloorList[index + 1];
+
+    var lastXPosition = wallInit;
+
+
+    var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor) 
+
+
+    while(traveled < wallWidth){
+
+        if(noise >= 1){
+            noise = 0.99; //Evade invisible bricks and noise excess
+        }
+
+        //random * (max - min) + min;
+        brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
+        brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
+    
+
+        //UPDATE TRAVELED
+
+        traveled += brickWidth;
+
+        //CHECK RIGHT BOUNDARY
+
+        if(traveled > wallWidth){ // if traveled is greater than the wall width, we adjust it
+        
+            var surplus = traveled - wallWidth;
+            brickWidth -= surplus;
+            traveled -= surplus;
+            //traveled seria igual que wallWidth con lo que esta seria la ultima iteracion del bucle
+        }
+
+        firstNode = m_NodeFloorList[index]; //puede que de error si estamos tocando solo la puntita del floor. 
+        nextFirstNode = m_NodeFloorList[index + 1];
+
+        finalNode = m_NodeFloorList[index];
+        nextfinalNode = m_NodeFloorList[index + 1];
+
+        peak = firstNode.position.y;//reset peak
+        peakNode = m_NodeFloorList[index]; 
+        nextPeakNode = m_NodeFloorList[index + 1];
+
+        //FirstNode apuntara al primer techo, peakNode apuntara al techo mas alto y finalNode apuntara al ultimo techo abarcado
+        //console.log(m_NodeFloorList);
+        while(traveled > nextFinalNode.position.x && index < m_NodeFloorList.length - 1){ //find the last piece of roof
+
+            //update current and next node
+            index += 2;
+    
+            finalNode = m_NodeFloorList[index];
+            nextFinalNode = m_NodeFloorList[index + 1];
+
+            if(nextFinalNode.position.y > peak){ //and save the most peak altitude
+    
+                peak = nextFinalNode.position.y;
+    
+                peakNode = finalNode; //guardamos los nodos que representan el techo mas alto 
+                nextPeakNode = nextFinalNode;
+    
+                crash = true;
+
+    
+            }
+    
+            //Se supone que aqui no debe llegar nunca pero por si acaso
+            if ( index >= m_NodeFloorList.lenght){ //if traveled is greater than last floor means that we pass the right boundary
+                index = m_NodeFloorList.lenght-1;
+                console.log("BREAK!");
+                finalNode = m_NodeFloorList[index];
+                nextFinalNode = m_NodeFloorList[index + 1];
+    
+                break;
+            }
+    
+        }
+
+        //Crear piedra
+
+        position = new Position(lastXPosition, peakNode.position.y);
+        leftDownNode = new WallNode(position, null, null, null, null);
+
+        position = new Position(lastXPosition, peakNode.position.y + brickHeight)
+        leftUpNode = new WallNode(position, null, null, null, null);
+
+        position = new Position(traveled, peakNode.position.y + brickHeight)
+        rightUpNode = new WallNode(position, null, null, null, null);
+
+        position = new Position(traveled, peakNode.position.y)
+        rightDownNode = new WallNode(position, null, null, null, null);
+
+        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode, null);
+
+        //Update
+        updateHorizontalNeighbors(leftDownNode, rightDownNode);
+        updateHorizontalNeighbors(leftUpNode, rightUpNode);
+        updateVerticalNeighbors(leftDownNode, leftUpNode);
+        updateVerticalNeighbors(rightDownNode, rightUpNode);
+
+        //Edges
+        upperEdge = new Edge(leftUpNode, rightUpNode, null, 0);
+        lowerEdge = new Edge(leftDownNode, rightDownNode, null, 0);
+        leftEdge = new Edge(leftDownNode, leftUpNode, null, 0);
+        rightEdge = new Edge(rightDownNode, rightUpNode, null, 0);
+        
+
+        //Push
+        nextNodeFloorList.push(leftUpNode, rightUpNode);
+        m_GlobalEdgeList.push(upperEdge, lowerEdge, leftEdge, rightEdge);
+        m_GlobalNodeList.push(leftDownNode, leftUpNode, rightUpNode, leftDownNode);
+        m_GlobalBrickList.push(brick);
+
+        lastXPosition = traveled;
         
     }
 

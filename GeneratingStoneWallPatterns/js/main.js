@@ -91,7 +91,7 @@
     
     makeWallJointPattern();
       
-    paintWall();
+    //paintWall();
 
     paintFloor();
     paintBricks();

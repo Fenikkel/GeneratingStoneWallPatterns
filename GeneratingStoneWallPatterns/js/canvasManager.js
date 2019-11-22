@@ -106,6 +106,7 @@ function paintBricks(){
     m_Context.lineWidth = 0.5; // por debajo de 1 solo baja la intensidad
     var currentNode;
     var currentBrick;
+    var y;
     for(var index = 0; index < m_GlobalBrickList.length ; index ++){
 
         currentBrick = m_GlobalBrickList[index];
@@ -133,31 +134,38 @@ function paintBricks(){
             // }
                     
             currentNode = currentBrick.leftDownNode;
-            
-            m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x,y);
 
             if(currentNode.right != null){
-                m_Context.lineTo(currentNode.right.position.x ,currentNode.right.position.y);
+                y = m_CanvasHeight - currentNode.right.position.y;
+                m_Context.lineTo(currentNode.right.position.x ,y);
             }
 
-            m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x, y);
 
             if(currentNode.upper != null){
-                m_Context.lineTo(currentNode.upper.position.x ,currentNode.upper.position.y);
+                y = m_CanvasHeight - currentNode.upper.position.y;
+                m_Context.lineTo(currentNode.upper.position.x ,y);
             }
 
             currentNode = currentBrick.rightUpNode;
-            
-            m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x,y);
 
             if(currentNode.left != null){
-                m_Context.lineTo(currentNode.left.position.x ,currentNode.left.position.y);
+                y = m_CanvasHeight - currentNode.left.position.y;
+                m_Context.lineTo(currentNode.left.position.x ,y);
             }
 
-            m_Context.moveTo(currentNode.position.x,currentNode.position.y);
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x, y);
 
             if(currentNode.lower != null){
-                m_Context.lineTo(currentNode.lower.position.x ,currentNode.lower.position.y);
+                y = m_CanvasHeight - currentNode.lower.position.y;
+                m_Context.lineTo(currentNode.lower.position.x ,y);
             }
             
         //}
