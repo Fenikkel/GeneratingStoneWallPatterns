@@ -1,4 +1,4 @@
-var colors = ["blue", "red", "green", "magenta", "yellow"];
+var colors = ["blue", "red", "green", "magenta", "gold"];
 var colorIndex = 0;
 
 
@@ -175,5 +175,108 @@ function paintBricks(){
     m_Context.strokeStyle = "green";
 
     m_Context.stroke();
+
+}
+
+
+
+function paintBrickRow(temporalBrickList){
+
+    m_Context.beginPath();
+    m_Context.lineWidth = 0.8; // por debajo de 1 solo baja la intensidad
+    var currentNode;
+    var currentBrick;
+    var y;
+    for(var index = 0; index < temporalBrickList.length ; index ++){
+
+        currentBrick = temporalBrickList[index];
+
+                    
+            currentNode = currentBrick.leftDownNode;
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x,y);
+
+            if(currentNode.right != null){
+                y = m_CanvasHeight - currentNode.right.position.y;
+                m_Context.lineTo(currentNode.right.position.x ,y);
+            }
+
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x, y);
+
+            if(currentNode.upper != null){
+                y = m_CanvasHeight - currentNode.upper.position.y;
+                m_Context.lineTo(currentNode.upper.position.x ,y);
+            }
+
+            currentNode = currentBrick.rightUpNode;
+
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x,y);
+
+            if(currentNode.left != null){
+                y = m_CanvasHeight - currentNode.left.position.y;
+                m_Context.lineTo(currentNode.left.position.x ,y);
+            }
+
+            y = m_CanvasHeight - currentNode.position.y;
+            m_Context.moveTo(currentNode.position.x, y);
+
+            if(currentNode.lower != null){
+                y = m_CanvasHeight - currentNode.lower.position.y;
+                m_Context.lineTo(currentNode.lower.position.x ,y);
+            }
+            
+
+    }
+
+    colorIndex++;
+    if(colorIndex >= colors.length){
+        colorIndex=0;
+    }
+
+    m_Context.strokeStyle = colors[colorIndex];
+
+    m_Context.stroke();
+
+}
+
+
+function paintEdges(){
+
+
+    var currentEdge;
+    var currentStartNode;
+    var currentEndNode;
+
+    var y;
+
+    for(var index = 0; index < m_GlobalEdgeList.length ; index ++){
+
+        m_Context.beginPath();
+        m_Context.lineWidth = 1; // por debajo de 1 solo baja la intensidad
+                    
+        currentEdge = m_GlobalEdgeList[index];
+        currentStartNode = currentEdge.startNode;
+        currentEndNode = currentEdge.endNode;
+
+        y = m_CanvasHeight - currentStartNode.position.y;
+        m_Context.moveTo(currentStartNode.position.x, y);
+
+        y = m_CanvasHeight - currentEndNode.position.y;
+        m_Context.lineTo(currentEndNode.position.x ,y);
+
+        colorIndex++;
+        if(colorIndex >= colors.length){
+            colorIndex=0;
+        }
+        m_Context.strokeStyle = colors[colorIndex];
+
+        m_Context.stroke();
+
+
+    }
+    
+
 
 }

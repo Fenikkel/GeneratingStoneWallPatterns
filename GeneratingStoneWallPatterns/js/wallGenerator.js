@@ -14,14 +14,14 @@ function makeWallJointPattern(){
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
     firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     
@@ -42,6 +42,9 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
     var leftUpNode;
     var rightDownNode;
     var rightUpNode;
+
+    var brick;
+    var temporalBrickList = [];
 
 
     var brickWidth = 0;
@@ -152,7 +155,16 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
         leftUpNode.right = rightUpNode;
         leftDownNode.right = rightDownNode;
 
+        //Create brick
+        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode, null);
+        m_GlobalBrickList.push(brick);
+        temporalBrickList.push(brick);
+
+
     }
+    paintBrickRow(temporalBrickList);
+
+
     paintFloor(); // pinta el techo m_NodeFloorList
 
 }
@@ -648,7 +660,9 @@ function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeigh
     var edge;
     var alternativeedge;
 
-    var firstBrick = true;;
+    var firstBrick = true;
+
+    var temporalBrickList = [];
 
 
     var brickWidth = 0;
@@ -790,8 +804,15 @@ function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeigh
 
         }
 
+        //Create brick
+        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode, null);
+        m_GlobalBrickList.push(brick);
+        temporalBrickList.push(brick);
+
     }
-    paintFloor(); // pinta el techo m_NodeFloorList
+
+    //paintBrickRow(temporalBrickList);
+    //paintFloor(); // pinta el techo m_NodeFloorList
 
 }
 
@@ -1121,7 +1142,7 @@ function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHe
 
 
     var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor) 
-
+    var temporalBrickList = [];
 
     while(traveled < wallWidth){
 
@@ -1226,13 +1247,15 @@ function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHe
         m_GlobalEdgeList.push(upperEdge, lowerEdge, leftEdge, rightEdge);
         m_GlobalNodeList.push(leftDownNode, leftUpNode, rightUpNode, leftDownNode);
         m_GlobalBrickList.push(brick);
+        temporalBrickList.push(brick);
 
         lastXPosition = traveled;
         
     }
 
     m_NodeFloorList = nextNodeFloorList;
-    paintFloor();
+    //paintFloor();
+    //paintBrickRow(temporalBrickList);
 
     
 }

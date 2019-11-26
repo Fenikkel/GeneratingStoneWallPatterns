@@ -15,6 +15,7 @@ var m_NodeFloorList = []; //The two upper nodes of the brick. If two bricks have
 var m_GlobalEdgeList = [];
 var m_GlobalBrickList = []; 
 
+
 var m_Index = 0;
 
 var m_AverageBrickWidth = parseInt(m_BrickWidthInput.value); //si no lo convertimos a numero nos dara valores raros

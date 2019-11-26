@@ -2,8 +2,11 @@
 
 (function () {
 
+
   
   try {
+
+
 
     processWall();
 
@@ -87,15 +90,19 @@
   function processWall(){
 
     m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
+    m_Context.fillStyle = "#f5f0f0";
+    m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
 
     
     makeWallJointPattern();
+
+    paintEdges();
       
     //paintWall();
 
-    paintFloor();
-    paintBricks();
-    paintFloor();
+    // paintFloor();
+    // paintBricks();
+    // paintFloor();
   }
 
   //LISTENERS
