@@ -14,14 +14,14 @@ function makeWallJointPattern(){
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
     firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     //tetrisEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     
@@ -811,8 +811,8 @@ function firstRowEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeigh
 
     }
 
-    //paintBrickRow(temporalBrickList);
-    //paintFloor(); // pinta el techo m_NodeFloorList
+    paintBrickRow(temporalBrickList);
+    paintFloor(); // pinta el techo m_NodeFloorList
 
 }
 
@@ -1254,8 +1254,8 @@ function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHe
     }
 
     m_NodeFloorList = nextNodeFloorList;
-    //paintFloor();
-    //paintBrickRow(temporalBrickList);
+    paintFloor();
+    paintBrickRow(temporalBrickList);
 
     
 }
@@ -1308,4 +1308,31 @@ function searchEdgeFromStartNode(startNode){
     }
 
     return edge;
+}
+
+function unifyNodes(){
+
+    var nodeIndex;
+    var compareNodeIndex;
+    var nodeListLenght = m_GlobalNodeList.length;
+
+    var currentNode;
+    var compareNode;
+
+
+    for ( nodeIndex = 0; nodeIndex < nodeListLenght; nodeIndex++) {
+
+        currentNode = m_GlobalNodeList[nodeIndex];
+        
+        for (compareNodeIndex = nodeIndex + 1; compareNodeIndex < nodeListLenght; compareNodeIndex++) {
+
+            compareNode = m_GlobalNodeList[compareNodeIndex];
+
+            //si son iguales eliminar
+            //continuar se elimine o no
+            
+        }
+
+        
+    }
 }

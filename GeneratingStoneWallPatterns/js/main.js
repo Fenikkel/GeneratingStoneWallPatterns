@@ -96,7 +96,7 @@
     
     makeWallJointPattern();
 
-    paintEdges();
+    //paintEdges();
       
     //paintWall();
 
