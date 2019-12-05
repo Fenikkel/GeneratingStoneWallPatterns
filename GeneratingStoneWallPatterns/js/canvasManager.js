@@ -244,6 +244,8 @@ function paintBrickRow(temporalBrickList){
 
 function paintEdges(){
 
+    m_Context.beginPath();
+    m_Context.lineWidth = 1; // por debajo de 1 solo baja la intensidad
 
     var currentEdge;
     var currentStartNode;
@@ -253,8 +255,7 @@ function paintEdges(){
 
     for(var index = 0; index < m_GlobalEdgeList.length ; index ++){
 
-        m_Context.beginPath();
-        m_Context.lineWidth = 1; // por debajo de 1 solo baja la intensidad
+
                     
         currentEdge = m_GlobalEdgeList[index];
         currentStartNode = currentEdge.startNode;
@@ -266,16 +267,17 @@ function paintEdges(){
         y = m_CanvasHeight - currentEndNode.position.y;
         m_Context.lineTo(currentEndNode.position.x ,y);
 
-        colorIndex++;
-        if(colorIndex >= colors.length){
-            colorIndex=0;
-        }
-        m_Context.strokeStyle = colors[colorIndex];
 
-        m_Context.stroke();
 
 
     }
+    colorIndex++;
+    if(colorIndex >= colors.length){
+        colorIndex=0;
+    }
+    m_Context.strokeStyle = colors[colorIndex];
+
+    m_Context.stroke();
     
 
 

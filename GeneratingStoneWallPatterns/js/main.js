@@ -7,7 +7,7 @@
   try {
 
 
-
+    
     processWall();
 
     // var bolea = isPointWithinTheLine(9, 1, 4, 1, 6, 1);
@@ -93,8 +93,15 @@
     m_Context.fillStyle = "#f5f0f0";
     m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
 
+    unifyNodesDemostration();
+    createJoint();
+    console.log(m_GlobalEdgeList);
+    //paintWall();
+    paintEdges();
+    //makeWallJointPattern();
     
-    makeWallJointPattern();
+
+    
 
     //paintEdges();
       

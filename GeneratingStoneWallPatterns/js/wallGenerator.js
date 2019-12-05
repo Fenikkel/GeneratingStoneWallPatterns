@@ -13,7 +13,8 @@ function makeWallJointPattern(){
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     // tetris(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
-    firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    //firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
@@ -28,6 +29,37 @@ function makeWallJointPattern(){
     //console.log(m_GlobalEdgeList);
     //console.log(m_NodeFloorList);
     //console.log(m_GlobalNodeList);
+
+
+
+}
+
+function unifyNodesDemostration(){
+
+
+    m_GlobalNodeList.length = 0; //clear the array
+    m_NodeFloorList.length = 0;
+    m_GlobalEdgeList.length = 0;
+    m_GlobalBrickList.length = 0;
+
+    //firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+
+    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+
+    var lengthBefore = m_GlobalNodeList.length;
+    console.log("Nodes before =" + lengthBefore);
+
+    unifyNodes();
+
+    console.log("Nodes after =" + m_GlobalNodeList.length);
 
 
 
@@ -162,10 +194,10 @@ function firstRow(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, no
 
 
     }
-    paintBrickRow(temporalBrickList);
+    //paintBrickRow(temporalBrickList);
 
 
-    paintFloor(); // pinta el techo m_NodeFloorList
+    //paintFloor(); // pinta el techo m_NodeFloorList
 
 }
 
@@ -1244,7 +1276,7 @@ function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHe
 
         //Push
         nextNodeFloorList.push(leftUpNode, rightUpNode);
-        m_GlobalEdgeList.push(upperEdge, lowerEdge, leftEdge, rightEdge);
+        //m_GlobalEdgeList.push(upperEdge, lowerEdge, leftEdge, rightEdge);
         m_GlobalNodeList.push(leftDownNode, leftUpNode, rightUpNode, leftDownNode);
         m_GlobalBrickList.push(brick);
         temporalBrickList.push(brick);
@@ -1254,8 +1286,8 @@ function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHe
     }
 
     m_NodeFloorList = nextNodeFloorList;
-    paintFloor();
-    paintBrickRow(temporalBrickList);
+    // paintFloor();
+    // paintBrickRow(temporalBrickList);
 
     
 }
@@ -1328,11 +1360,127 @@ function unifyNodes(){
 
             compareNode = m_GlobalNodeList[compareNodeIndex];
 
-            //si son iguales eliminar
-            //continuar se elimine o no
+            if(currentNode.position.x == compareNode.position.x && currentNode.position.y == compareNode.position.y){
+                m_GlobalNodeList.splice(compareNodeIndex, 1);
+                nodeListLenght--;
+            }
             
         }
 
         
     }
 }
+
+//No vale, se une con otros que no son si no tiene vecino
+function findVerticalNodes( node ){ // finds the upper and lower neightbours and create their respective edges
+
+    var upperClosestNode = null;
+    var upperClosestDistance = Infinity;
+
+    // var lowerClosestNode = null;
+    // var lowerClosestDistance = -Infinity;
+
+    var distance = 0;
+
+    m_GlobalNodeList.forEach(currentNode => {
+
+        if(currentNode != node && currentNode.position.x == node.position.x){
+
+            distance = currentNode.position.y - node.position.y;
+            
+            if( distance > 0 && distance < upperClosestDistance){ //node is above
+
+                upperClosestDistance = distance;
+                upperClosestNode = currentNode;
+
+            }
+            // else if(distance < 0 && distance > lowerClosestDistance){ //node is down
+                
+            //     lowerClosestDistance = distance;
+            //     lowerClosestNode = currentNode;
+
+            // }
+
+        }
+
+        
+    });
+
+    if(upperClosestNode != null){
+        updateVerticalNeighbors(node, upperClosestNode);
+        createEdge(node,upperClosestNode);
+    }
+    
+    // if(lowerClosestNode != null){
+    //     updateVerticalNeighbors(lowerClosestNode, node);
+    //     createEdge(lowerClosestNode, node);    
+    // }
+
+
+}
+
+function findHorizontalNodes( node ){ // finds the left and right neightbours and create their respective edges
+
+    var rightClosestNode = null;
+    var rightClosestDistance = Infinity;
+
+    // var leftClosestNode = null;
+    // var leftClosestDistance = -Infinity;
+
+    var distance = 0;
+
+    m_GlobalNodeList.forEach(currentNode => {
+
+        if(currentNode != node && currentNode.position.y == node.position.y){
+
+            distance = currentNode.position.x - node.position.x;
+            
+            if( distance > 0 && distance < rightClosestDistance){ //node is above
+
+                rightClosestDistance = distance;
+                rightClosestNode = currentNode;
+
+            }
+            // else if(distance < 0 && distance > leftClosestDistance){ //node is down
+                
+            //     leftClosestDistance = distance;
+            //     leftClosestNode = currentNode;
+
+            // }
+
+        }
+
+        
+    });
+
+    if(rightClosestNode != null){
+        updateHorizontalNeighbors(node, rightClosestNode);
+        createEdge(node,rightClosestNode);
+    }
+    
+    // if(leftClosestNode != null){
+    //     updateHorizontalNeighbors(leftClosestNode, node);
+    //     createEdge(leftClosestNode, node);    
+    // }
+
+
+
+}
+
+function createEdge(startNode, endNode){
+
+    var edge = new Edge(startNode,endNode, null, 0);
+    m_GlobalEdgeList.push(edge);
+
+}
+
+function createJoint(){
+
+    m_GlobalNodeList.forEach(node => {
+
+        findVerticalNodes(node);
+        findHorizontalNodes(node);
+        
+    });
+}
+
