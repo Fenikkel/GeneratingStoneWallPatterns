@@ -94,7 +94,7 @@
     m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
 
     unifyNodesDemostration();
-    createJoint();
+    //createJoint();
     console.log(m_GlobalEdgeList);
     //paintWall();
     paintEdges();

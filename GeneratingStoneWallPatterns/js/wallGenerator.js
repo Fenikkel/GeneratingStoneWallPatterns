@@ -42,10 +42,12 @@ function unifyNodesDemostration(){
     m_GlobalEdgeList.length = 0;
     m_GlobalBrickList.length = 0;
 
-    //firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    //firstRow(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
-    tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     // tetrisBruteForce(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
@@ -865,10 +867,10 @@ function tetrisEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight,
     var brickHeight = 0;
 
     var traveled = wallInit;
-    var firstBrick = true;
+    
 
     var index = 0; //node floor list index
-    var crash = false;
+    
 
     var firstNode = m_NodeFloorList[index];
     var nextFirstNode =m_NodeFloorList[index + 1];
@@ -1292,6 +1294,163 @@ function tetrisBruteForce(wallInit, wallFinal, averageBrickWidth, averageBrickHe
     
 }
 
+function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBrickHeight, noise){
+
+    
+    var wallWidth = wallFinal;
+
+    var brick;
+    var position;
+    var upperEdge;
+    var lowerEdge;
+    var leftEdge;
+    var rightEdge;
+    var leftDownNode;
+    var leftUpNode;
+    var rightDownNode;
+    var rightUpNode;
+
+    var brickWidth = 0;
+    var brickHeight = 0;
+
+    var traveled = wallInit;
+    
+
+    var index = 0; //node floor list index
+
+    var firstNode = m_NodeFloorList[index];
+    var nextFirstNode =m_NodeFloorList[index + 1];
+
+    var peak = 0;
+    var peakNode = m_NodeFloorList[index];
+    var nextPeakNode = m_NodeFloorList[index + 1];
+
+    var finalNode = m_NodeFloorList[index];
+    var nextFinalNode =m_NodeFloorList[index + 1];
+
+    var lastXPosition = wallInit;
+
+
+    var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor) 
+    var temporalBrickList = [];
+
+    while(traveled < wallWidth){
+
+        if(noise >= 1){
+            noise = 0.99; //Evade invisible bricks and noise excess
+        }
+
+        //random * (max - min) + min;
+        brickWidth = Math.floor(Math.random() * ((averageBrickWidth + (averageBrickWidth * noise)) - (averageBrickWidth - (averageBrickWidth * noise))) + averageBrickWidth - (averageBrickWidth * noise));
+        brickHeight = Math.floor(Math.random() * ((averageBrickHeight + (averageBrickHeight * noise)) - (averageBrickHeight - (averageBrickHeight * noise))) + averageBrickHeight - (averageBrickHeight * noise));
+    
+
+        //UPDATE TRAVELED
+
+        traveled += brickWidth;
+
+        //CHECK RIGHT BOUNDARY
+
+        if(traveled > wallWidth){ // if traveled is greater than the wall width, we adjust it
+        
+            var surplus = traveled - wallWidth;
+            brickWidth -= surplus;
+            traveled -= surplus;
+            //traveled seria igual que wallWidth con lo que esta seria la ultima iteracion del bucle
+        }
+
+        firstNode = m_NodeFloorList[index]; //puede que de error si estamos tocando solo la puntita del floor. 
+        nextFirstNode = m_NodeFloorList[index + 1];
+
+        finalNode = m_NodeFloorList[index];
+        nextfinalNode = m_NodeFloorList[index + 1];
+
+        peak = firstNode.position.y;//reset peak
+        peakNode = m_NodeFloorList[index]; 
+        nextPeakNode = m_NodeFloorList[index + 1];
+
+        //FirstNode apuntara al primer techo, peakNode apuntara al techo mas alto y finalNode apuntara al ultimo techo abarcado
+        //console.log(m_NodeFloorList);
+        while(traveled > nextFinalNode.position.x && index < m_NodeFloorList.length - 1){ //find the last piece of roof
+
+            //update current and next node
+            index += 2;
+    
+            finalNode = m_NodeFloorList[index];
+            nextFinalNode = m_NodeFloorList[index + 1];
+
+            if(nextFinalNode.position.y > peak){ //and save the most peak altitude
+    
+                peak = nextFinalNode.position.y;
+    
+                peakNode = finalNode; //guardamos los nodos que representan el techo mas alto 
+                nextPeakNode = nextFinalNode;
+    
+                crash = true;
+
+    
+            }
+    
+            //Se supone que aqui no debe llegar nunca pero por si acaso
+            if ( index >= m_NodeFloorList.lenght){ //if traveled is greater than last floor means that we pass the right boundary
+                index = m_NodeFloorList.lenght-1;
+                console.log("BREAK!");
+                finalNode = m_NodeFloorList[index];
+                nextFinalNode = m_NodeFloorList[index + 1];
+    
+                break;
+            }
+    
+        }
+
+        //Crear piedra
+
+        leftDownNode = createNode(lastXPosition, peakNode.position.y);
+
+        leftUpNode = createNode(lastXPosition, peakNode.position.y + brickHeight);
+
+        rightUpNode = createNode(traveled, peakNode.position.y + brickHeight);
+
+        rightDownNode = createNode(traveled, peakNode.position.y);
+
+        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode, null);
+
+        //Update
+        updateHorizontalNeighbors(leftDownNode, rightDownNode);
+        updateHorizontalNeighbors(leftUpNode, rightUpNode);
+        updateVerticalNeighbors(leftDownNode, leftUpNode);
+        updateVerticalNeighbors(rightDownNode, rightUpNode);
+
+        // if(isTheNodeInAEdge){ //is within a edge
+
+        // }
+        // else{ // it's floating
+
+        // }
+
+        //Edges
+        upperEdge = new Edge(leftUpNode, rightUpNode, null, 0);
+        lowerEdge = new Edge(leftDownNode, rightDownNode, null, 0);
+        leftEdge = new Edge(leftDownNode, leftUpNode, null, 0);
+        rightEdge = new Edge(rightDownNode, rightUpNode, null, 0);
+        
+
+        //Push
+        nextNodeFloorList.push(leftUpNode, rightUpNode);
+        m_GlobalBrickList.push(brick);
+        temporalBrickList.push(brick);
+
+        lastXPosition = traveled;
+        
+    }
+
+    m_NodeFloorList = nextNodeFloorList;
+    paintFloor();
+    paintBrickRow(temporalBrickList);
+
+    
+}
+
 function updateVerticalNeighbors(lowerNode, upperNode){
 
     lowerNode.upper = upperNode;
@@ -1467,7 +1626,14 @@ function findHorizontalNodes( node ){ // finds the left and right neightbours an
 
 }
 
-function createEdge(startNode, endNode){
+function createEdge(startNode, endNode){ //startNode is always less value than endNode in "x" and in "y"
+
+    if(startNode.position.x == endNode.position.x){ // is a vertical edge
+        updateVerticalNeighbors(startNode, endNode);
+    }
+    else{ // is a horizontal edge
+        updateHorizontalNeighbors(startNode, endNode);
+    }
 
     var edge = new Edge(startNode,endNode, null, 0);
     m_GlobalEdgeList.push(edge);
@@ -1483,4 +1649,53 @@ function createJoint(){
         
     });
 }
+
+function createNode(posX, posY){ //search if the node is already in the list, push it if not, and then return the reference of the node
+
+    var position = new Position(posX, posY);
+    node = new WallNode(position, null, null, null, null);
+
+    var isNew = true;
+    var currentNode;
+
+    for (var i = 0 ; i < m_GlobalNodeList.length ; i++){
+        
+        currentNode = m_GlobalNodeList[i];
+
+        if(node.position.x == currentNode.position.x && node.position.y == currentNode.position.y){
+            node = currentNode;
+            isNew = false;
+            break; // there is no repeted elements in the list
+        }
+
+    }
+
+    if(isNew){
+        m_GlobalNodeList.push(node);
+    }
+
+    return node;
+}
+
+function isTheNodeInAEdge(node){
+
+    var currentedge;
+    var isWithin = false;
+    for (var i = 0 ; i < m_GlobalEdgeList.length ; i++){
+        
+        currentedge = m_GlobalEdgeList[i];
+
+        if(isNodeWithinTheEdge(node, currentedge)){
+            isWithin = true;
+            insertNodeInTheEdge(node, currentedge);
+            break;
+
+        }
+    }
+    return isWithin;
+
+    //return...? findEdge by his first node or by his end node en el metode cidador
+
+}
+
 
