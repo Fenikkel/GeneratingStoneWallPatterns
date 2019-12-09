@@ -1413,26 +1413,21 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
 
         rightDownNode = createNode(traveled, peakNode.position.y);
 
-        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode, null);
+        brick = new Brick( leftDownNode, leftUpNode, rightUpNode, rightDownNode);
 
         //Update
-        updateHorizontalNeighbors(leftDownNode, rightDownNode);
-        updateHorizontalNeighbors(leftUpNode, rightUpNode);
-        updateVerticalNeighbors(leftDownNode, leftUpNode);
-        updateVerticalNeighbors(rightDownNode, rightUpNode);
+        // updateHorizontalNeighbors(leftDownNode, rightDownNode);
+        // updateHorizontalNeighbors(leftUpNode, rightUpNode);
+        // updateVerticalNeighbors(leftDownNode, leftUpNode);
+        // updateVerticalNeighbors(rightDownNode, rightUpNode);
 
-        // if(isTheNodeInAEdge){ //is within a edge
+        createHorizontalBrickEdge(leftDownNode, rightDownNode);
+        // createBrickEdge(leftDownNode, rightDownNode);
+        // // // createBrickEdge(leftDownNode, leftUpNode); //leftdownnode should be updated already
+        // // // createBrickEdge(rightDownNode, rightUpNode); //rightdownnode shoud be updated already
+        // createBrickEdge(leftUpNode, rightUpNode); //both updated, it should be like do a createEdge(leftUpNode, rightUpNode)
 
-        // }
-        // else{ // it's floating
-
-        // }
-
-        //Edges
-        upperEdge = new Edge(leftUpNode, rightUpNode, null, 0);
-        lowerEdge = new Edge(leftDownNode, rightDownNode, null, 0);
-        leftEdge = new Edge(leftDownNode, leftUpNode, null, 0);
-        rightEdge = new Edge(rightDownNode, rightUpNode, null, 0);
+        //The neightbours should be updated already
         
 
         //Push
@@ -1445,10 +1440,126 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
     }
 
     m_NodeFloorList = nextNodeFloorList;
-    paintFloor();
-    paintBrickRow(temporalBrickList);
+    paintFloor(); // no pinta si no tiene las referencias a los vecinos
+    //paintBrickRow(temporalBrickList);
 
     
+}
+
+function createHorizontalBrickEdge(startNode, endNode){ //create correctly the edge (or the edges) of the brick
+
+    var start = startNode;
+    var end = endNode;
+    var temporalEdge;
+    var startOut = false;
+    var endOut = false;
+    //var bothWithin = true;
+
+    var startEdge = isWithinAEdge(startNode);
+    var endEdge = isWithinAEdge(endNode);
+
+    
+    if(startEdge != null){ //is within a edge
+        
+        start = startEdge.endNode;
+        insertNodeInTheEdge(startNode, startEdge);
+
+        
+    }
+    else{ // it's floating
+        startOut = true;
+    }
+
+    var endEdge = isWithinAEdge(endNode); //aci esta updated
+
+    if(endEdge != null){ //is within a edge
+        end = endEdge.startNode;
+        insertNodeInTheEdge(endNode, endEdge);
+
+    }
+    else{ // it's floating
+        endOut = true;
+    }
+
+    if(startOut && endOut){ //both out. So have and edge between them
+        searchTheEdgeBetweenTwoNodes(startNode, endNode);
+    }
+    else if(startOut){ // just start is out
+        createEdge(start, end);
+    }
+    else if(endOut){ // just end is out
+        createEdge(start, end);
+    }
+    else{ // both are in
+        //all already done
+        console.log("BOTH IN");
+    }
+
+}
+
+function createBrickEdge(startNode, endNode){ //create correctly the edge (or the edges) of the brick
+
+    var start = startNode;
+    var end = endNode;
+    var temporalEdge;
+    var startOut = false;
+    var endOut = false;
+    //var bothWithin = true;
+
+    
+    if(isTheNodeInAEdge(startNode)){ //is within a edge
+        temporalEdge = searchEdgeFromStartNode(startNode);
+        start = temporalEdge.endNode;
+    }
+    else{ // it's floating
+        startOut = true;
+    }
+
+    if(isTheNodeInAEdge(endNode)){ //is within a edge
+        temporalEdge = searchEdgeFromEndNode(endNode);
+        end = temporalEdge.startNode;
+    }
+    else{ // it's floating
+        endOut = true;
+    }
+
+    if(startOut && endOut){ //both out. So have and edge between them
+        searchTheEdgeBetweenTwoNodes(startNode, endNode);
+    }
+    else if(startOut){ // just start is out
+        createEdge(start, end);
+    }
+    else if(endOut){ // just end is out
+        createEdge(start, end);
+    }
+    else{ // both are in
+        //all already done
+    }
+
+}
+
+function searchTheEdgeBetweenTwoNodes( startNode, endNode ){
+
+    //Hay que valorar el caso en que este lado del brick sea mas grande que dos bricks juntos que lo aguantan o estan a su lado
+    var temporalEdge = new Edge(startNode, endNode, null, 0);
+    var currentEdge;
+    
+    for(var i = 0 ; i < m_GlobalEdgeList ; i++){
+        currentEdge = m_GlobalEdgeList[i];
+
+        if(isNodeWithinTheEdge(currentEdge.startNode, temporalEdge)){
+            
+            createEdge(startNode, currentEdge.startNode);
+            createEdge(currentEdge.endNode, endNode);
+
+            return true;
+        }
+
+
+    }
+    console.warn("No ha encontrado un edge dentro del edge. Cagada");
+    return false;
+
 }
 
 function updateVerticalNeighbors(lowerNode, upperNode){
@@ -1479,19 +1590,46 @@ function insertNodeInTheEdge(node, edge){
 
     //m_GlobalEdgeList = m_GlobalEdgeList.filter(e => e !== edge); //quita edge pero de una forma menos eficiente?
 
+    //Update links
+    if(firstEdge.startNode.position.x == firstEdge.endNode.position.x){ // is a vertical edge. secondEdge should be too
+        updateVerticalNeighbors(firstEdge.startNode, firstEdge.endNode);
+        updateVerticalNeighbors(secondEdge.startNode, secondEdge.endNode);
+    }
+    else{ // is a horizontal edge
+        updateHorizontalNeighbors(firstEdge.startNode, firstEdge.endNode);
+        updateHorizontalNeighbors(secondEdge.startNode, secondEdge.endNode);
+    }
 
     m_GlobalEdgeList.push(firstEdge, secondEdge);
 }
 
 function searchEdgeFromStartNode(startNode){
 
-    var lowerNode; 
+    var currentStartNode; 
     var edge;
     
     for (let index = 0; index < m_GlobalEdgeList.length; index++) {
-        lowerNode = m_GlobalEdgeList[index].startNode;
+        currentStartNode = m_GlobalEdgeList[index].startNode;
 
-        if(startNode == lowerNode){
+        if(startNode == currentStartNode){
+            edge = m_GlobalEdgeList[index];
+            break;
+        }
+        
+    }
+
+    return edge;
+}
+
+function searchEdgeFromEndNode(endNode){
+
+    var currentEndNode; 
+    var edge;
+    
+    for (let index = 0; index < m_GlobalEdgeList.length; index++) {
+        currentEndNode = m_GlobalEdgeList[index].endNode;
+
+        if(endNode == currentEndNode){
             edge = m_GlobalEdgeList[index];
             break;
         }
@@ -1685,7 +1823,7 @@ function isTheNodeInAEdge(node){
         
         currentedge = m_GlobalEdgeList[i];
 
-        if(isNodeWithinTheEdge(node, currentedge)){
+        if(isNodeWithinTheEdge(node, currentedge)){ //in the case is within and not in the border
             isWithin = true;
             insertNodeInTheEdge(node, currentedge);
             break;
@@ -1695,6 +1833,29 @@ function isTheNodeInAEdge(node){
     return isWithin;
 
     //return...? findEdge by his first node or by his end node en el metode cidador
+
+}
+
+function isWithinAEdge(node){
+
+    var currentEdge;
+    for(var i = 0 ; i < m_GlobalEdgeList.length ; i++){
+        currentEdge = m_GlobalEdgeList[i];
+
+        if(currentEdge.startNode.position.x == currentEdge.endNode.position.x && currentEdge.endNode.position.x == node.position.x ){ //vertical case
+            if( currentEdge.startNode.position.y < node.position.y && node.position.y < currentEdge.endNode.position.y){
+                return currentEdge;
+            }
+        }
+
+        else if(currentEdge.startNode.position.y == currentEdge.endNode.position.y && currentEdge.endNode.position.y == node.position.y){ // horizontal case
+            if(currentEdge.startNode.position.x < node.position.x && node.position.x < currentEdge.endNode.position.x){
+                return currentEdge;
+            }
+        }
+        
+    }
+    return null;
 
 }
 

@@ -61,7 +61,7 @@ function isNodeWithinTheEdge(node, edge){
 
     if( (node.position.x == edge.startNode.position.x && node.position.y == edge.startNode.position.y) || (node.position.x == edge.endNode.position.x  && node.position.y == edge.endNode.position.y) ){ // if it's the same point...
 
-        console.warn("This point already exist in the edge list.");
+        //console.warn("This point already exist in the edge list.");
         return false; //The point lies on the end of the line
 
     }
