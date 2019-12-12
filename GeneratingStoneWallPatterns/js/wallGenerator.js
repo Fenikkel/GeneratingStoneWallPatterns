@@ -1334,7 +1334,9 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
     var nextNodeFloorList = []; //list for save the next floor (while constructing we are still using the old floor) 
     var temporalBrickList = [];
 
-    while(traveled < wallWidth){
+
+    var TEMPORAL = 0;
+    while(traveled < wallWidth){//traveled < wallWidth){ //TEMPORAL < 3){
 
         if(noise >= 1){
             noise = 0.99; //Evade invisible bricks and noise excess
@@ -1422,6 +1424,10 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         // updateVerticalNeighbors(rightDownNode, rightUpNode);
 
         createHorizontalBrickEdge(leftDownNode, rightDownNode);
+        //createHorizontalBrickEdge(leftUpNode, rightUpNode); //MAL
+        createEdge(leftUpNode, rightUpNode);
+        createVerticalBrickEdge(leftDownNode, leftUpNode);
+
         // createBrickEdge(leftDownNode, rightDownNode);
         // // // createBrickEdge(leftDownNode, leftUpNode); //leftdownnode should be updated already
         // // // createBrickEdge(rightDownNode, rightUpNode); //rightdownnode shoud be updated already
@@ -1436,6 +1442,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         temporalBrickList.push(brick);
 
         lastXPosition = traveled;
+        TEMPORAL++;
         
     }
 
@@ -1450,50 +1457,76 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
 
     var start = startNode;
     var end = endNode;
-    var temporalEdge;
+
     var startOut = false;
     var endOut = false;
-    //var bothWithin = true;
 
-    var startEdge = isWithinAEdge(startNode);
-    var endEdge = isWithinAEdge(endNode);
+
+    //START NODE
+    var startWithinEdge = isWithinAEdge(startNode); // get the edge where the start node is within. Null if not.
+
+    var startEdge = searchEdgeFromStartNode(startNode); // search if the start node is in the cortner instead of within
 
     
-    if(startEdge != null){ //is within a edge
+    if(startWithinEdge != null){ //check if it's within a edge
         
-        start = startEdge.endNode;
-        insertNodeInTheEdge(startNode, startEdge);
+        start = startWithinEdge.endNode;
+        insertNodeInTheEdge(startNode, startWithinEdge);
 
-        
+        console.log("start INSERTED");    
     }
-    else{ // it's floating
+    else if(startEdge == null){ // check if it's floating (and not in a corner)
+
         startOut = true;
-    }
-
-    var endEdge = isWithinAEdge(endNode); //aci esta updated
-
-    if(endEdge != null){ //is within a edge
-        end = endEdge.startNode;
-        insertNodeInTheEdge(endNode, endEdge);
 
     }
-    else{ // it's floating
+
+
+    //END NODE
+    var endWithinEdge = isWithinAEdge(endNode); //aci esta updated
+    var endEdge = searchEdgeFromEndNode(endNode);
+
+    if(endWithinEdge != null){ //is within a edge
+
+        end = endWithinEdge.startNode;
+        insertNodeInTheEdge(endNode, endWithinEdge);
+        console.log("end INSERTED");
+
+    }
+    else if(endEdge == null){ // it's floating
+
         endOut = true;
+
     }
+
+    //UNIFY FLOATING NODES
 
     if(startOut && endOut){ //both out. So have and edge between them
+
         searchTheEdgeBetweenTwoNodes(startNode, endNode);
+
     }
     else if(startOut){ // just start is out
+
         createEdge(start, end);
+         console.log("start out");
+
     }
     else if(endOut){ // just end is out
+
         createEdge(start, end);
+        console.log("end out");
+
     }
     else{ // both are in
+
         //all already done
-        console.log("BOTH IN");
+        console.log("BOTH IN (or in the corners)");
     }
+
+}
+
+function createVerticalBrickEdge(startNode, endNode){
 
 }
 
@@ -1584,6 +1617,7 @@ function insertNodeInTheEdge(node, edge){
     for (var i = m_GlobalEdgeList.length - 1 ; i >= 0 ; i--) {
         if (m_GlobalEdgeList[i] == edge) {
             m_GlobalEdgeList.splice(i, 1);
+            console.log("ELIMINADO: " + i)
             break;       //<-- comment  if all the same elements has to be removed
         }
     }
@@ -1599,14 +1633,16 @@ function insertNodeInTheEdge(node, edge){
         updateHorizontalNeighbors(firstEdge.startNode, firstEdge.endNode);
         updateHorizontalNeighbors(secondEdge.startNode, secondEdge.endNode);
     }
-
+    console.log("lenght before: " + m_GlobalEdgeList.length);
     m_GlobalEdgeList.push(firstEdge, secondEdge);
+    console.log("lenght after: " + m_GlobalEdgeList.length);
+
 }
 
 function searchEdgeFromStartNode(startNode){
 
     var currentStartNode; 
-    var edge;
+    var edge = null;
     
     for (let index = 0; index < m_GlobalEdgeList.length; index++) {
         currentStartNode = m_GlobalEdgeList[index].startNode;
@@ -1624,7 +1660,7 @@ function searchEdgeFromStartNode(startNode){
 function searchEdgeFromEndNode(endNode){
 
     var currentEndNode; 
-    var edge;
+    var edge = null;
     
     for (let index = 0; index < m_GlobalEdgeList.length; index++) {
         currentEndNode = m_GlobalEdgeList[index].endNode;

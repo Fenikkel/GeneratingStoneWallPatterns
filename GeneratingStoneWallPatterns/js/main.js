@@ -117,8 +117,9 @@
   m_BrickWidthInput.addEventListener('change', function() {
 
     m_AverageBrickWidth = parseInt(m_BrickWidthInput.value);
-
-    processWall();
+    
+    debugTetris();
+    //processWall();
     
 
   })
@@ -127,7 +128,8 @@
 
     m_AverageBrickHeight = parseInt(m_BrickHeightInput.value);
 
-    processWall();
+    debugTetris();
+    //processWall();
 
   })
 
@@ -135,7 +137,8 @@
 
     m_Noise = parseInt(m_NoiseInput.value)/100;
 
-    processWall();
+    debugTetris();
+    //processWall();
 
   })
 

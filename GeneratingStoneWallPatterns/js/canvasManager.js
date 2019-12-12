@@ -2,6 +2,29 @@ var colors = ["blue", "red", "green", "magenta", "gold"];
 var colorIndex = 0;
 
 
+function paintNodes(){
+
+    m_Context.beginPath();
+    var y = 0;
+
+    for (let index = 0; index < m_GlobalNodeList.length; index++) {
+        const element = m_GlobalNodeList[index];
+        y = m_CanvasHeight - element.position.y;
+        m_Context.moveTo(element.position.x, y);
+        m_Context.arc(element.position.x, y, 2, 0, 2 * Math.PI);
+        
+    }
+    // m_GlobalNodeList.forEach(node => {
+    //     m_Context.arc(node.position.x, node.position.y, 2, 0, 2 * Math.PI);
+    // });
+
+
+
+    //m_Context.strokeStyle = "black";
+    m_Context.fillStyle = "black";
+    m_Context.fill();
+}
+
 function paintWall(){
 
     m_Context.beginPath();
@@ -244,7 +267,7 @@ function paintBrickRow(temporalBrickList){
 
 function paintEdges(){
 
-    m_Context.beginPath();
+    //m_Context.beginPath();
     m_Context.lineWidth = 1; // por debajo de 1 solo baja la intensidad
 
     var currentEdge;
@@ -256,7 +279,7 @@ function paintEdges(){
     for(var index = 0; index < m_GlobalEdgeList.length ; index ++){
 
 
-                    
+        m_Context.beginPath();    
         currentEdge = m_GlobalEdgeList[index];
         currentStartNode = currentEdge.startNode;
         currentEndNode = currentEdge.endNode;
@@ -268,16 +291,17 @@ function paintEdges(){
         m_Context.lineTo(currentEndNode.position.x ,y);
 
 
-
+        colorIndex++;
+        if(colorIndex >= colors.length){
+            colorIndex=0;
+        }
+       
+        m_Context.strokeStyle = colors[colorIndex];
+    
+        m_Context.stroke();
 
     }
-    colorIndex++;
-    if(colorIndex >= colors.length){
-        colorIndex=0;
-    }
-    m_Context.strokeStyle = colors[colorIndex];
 
-    m_Context.stroke();
     
 
 

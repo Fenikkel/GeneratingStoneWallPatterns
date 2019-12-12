@@ -10,28 +10,31 @@ function debugTetris(){
     m_GlobalEdgeList.length = 0;
     m_GlobalBrickList.length = 0;
 
-    var position = new Position(10, 0);
-    startFloorNode = new WallNode(position, null, null, null, null);
+    //create first floor nodes
+    var startFloorNode = createNode(10, 0);
+    var endFloorNode = createNode(m_CanvasWidth-10, 0);
+    m_NodeFloorList.push(startFloorNode,endFloorNode);
 
-    var position = new Position(m_CanvasWidth-10, 0);
-    endFloorNode = new WallNode(position, null, null, null, null);
-
-    //updateHorizontalNeighbors(startFloorNode, endFloorNode);
+    //create the edge of the first floor
     createEdge(startFloorNode, endFloorNode);
-    m_NodeFloorList.push(startFloorNode, endFloorNode);
 
     //paintFloor(); //paint the first floor
 
-
+    //firstRowEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    
     tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    // tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
     // console.log("Node floor list: " + m_NodeFloorList);
     // console.log("Global node list: "+ m_GlobalNodeList);
-    console.log("Global brick list: "+ m_GlobalBrickList);
-    console.log("Global edge list: "+ m_GlobalEdgeList);
+    // console.log("Global brick list: "+ m_GlobalBrickList);
+    //console.log("Global edge list: "+ m_GlobalEdgeList);
+    console.log("Global node list LENGTH: "+ m_GlobalNodeList.length);
+    console.log("Global brick list LENGTH: "+ m_GlobalBrickList.length);
+    console.log("Global edge list LENGTH: "+ m_GlobalEdgeList.length);
 
     paintEdges();
+    paintNodes();
 
 
 
