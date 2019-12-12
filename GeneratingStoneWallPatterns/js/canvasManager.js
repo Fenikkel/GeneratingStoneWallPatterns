@@ -200,6 +200,36 @@ function paintBricks(){
     m_Context.stroke();
 
 }
+    
+function fillBricks(){
+
+    m_Context.beginPath();
+    m_Context.lineWidth = 0.5; // por debajo de 1 solo baja la intensidad
+    var currentNode;
+    var currentBrick;
+    var y;
+    var width;
+    var height;
+    for(let index = 0; index < m_GlobalBrickList.length ; index ++){
+
+        currentBrick = m_GlobalBrickList[index];
+
+        width = currentBrick.rightDownNode.position.x - currentBrick.leftDownNode.position.x;
+
+        height = currentBrick.rightUpNode.position.y - currentBrick.rightDownNode.position.y;
+
+        //m_Context.rect(currentBrick.leftUpNode.position.x + 2, m_CanvasHeight - currentBrick.leftUpNode.position.y + 2 , width - 4, height - 4);
+        m_Context.rect(currentBrick.leftUpNode.position.x, m_CanvasHeight - currentBrick.leftUpNode.position.y, width, height);
+        
+
+    }
+    
+    m_Context.fillStyle = "white";
+
+    m_Context.fill();
+
+
+}
 
 
 
