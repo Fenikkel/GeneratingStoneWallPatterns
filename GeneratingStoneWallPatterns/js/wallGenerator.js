@@ -1336,7 +1336,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
 
 
     var TEMPORAL = 0;
-    while(traveled < wallWidth){//traveled < wallWidth){ //TEMPORAL < 3){
+    while(TEMPORAL < 3){//traveled < wallWidth){ //TEMPORAL < 3){
 
         console.log("Brick nº"+ TEMPORAL + "\n\n");
 
@@ -1580,7 +1580,80 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
 
 }
 
-function createVerticalBrickEdge(startNode, endNode){
+function checkNodeInterference(node){ //Insert the node if is in the middle of an edge (not in the corners)
+
+        var edgeInterfered = isWithinAEdge(node); // get the edge where the start node is within. Null if not.
+
+        if(edgeInterfered != null){ //check if it's within a edge
+            
+            insertNodeInTheEdge(node, edgeInterfered);
+    
+            console.log("...INSERTED...");    
+        }
+}
+
+function createVerticalBrickEdge(){
+
+    //Check and insert nodes in the edges if it is the case
+    checkNodeInterference(startNode);
+    checkNodeInterference(endNode);
+
+    //Get the corresponding edges involved
+    var startEdgeList = searchEdgeFromStartNode(startNode); // search if the start node is in the cortner instead of within
+    
+    var startEdge = null;
+    var vertical = false;
+
+    if(startEdgeList != null){
+
+        for (let index = 0; index < startEdgeList.length; index++) {
+            const currentEdge = startEdgeList[index];
+            if(isVerticalEdge(currentEdge)){
+                vertical = true;
+                startEdge = currentEdge;
+                break;
+            }
+            
+        }
+
+    }
+
+    var endEdgeList = searchEdgeFromEndNode(endNode);
+    var endEdge = null;
+    vertical = false;
+    
+    if(endEdgeList != null){
+
+        for (let index = 0; index < endEdgeList.length; index++) {
+            const currentEdge = endEdgeList[index];
+            if(isVerticalEdge(currentEdge)){
+                vertical = true;
+                endEdge = currentEdge;
+                break;
+            }
+            
+        }
+
+    }
+
+    if(startEdge == endEdge){
+
+        //do nothing
+
+    }
+    else{
+
+        // subimos a la otra punta de los edges y buscamos si es la punta de otro edge. Cuando ya no lo son, ya podemos juntarlos.
+        //crear metodos de lo repetitivo de arriba porque me serviran para aqui tambien.
+        //cuidado que no se crucen.
+
+    }
+
+}
+
+function createVerticalBrickEdgeCopy(startNode, endNode){
+
+
 
     var start = startNode;
     var end = endNode;
