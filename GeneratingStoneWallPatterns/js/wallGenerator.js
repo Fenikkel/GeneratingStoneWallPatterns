@@ -1336,7 +1336,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
 
 
     var TEMPORAL = 0;
-    while(TEMPORAL < 3){//traveled < wallWidth){ //TEMPORAL < 3){
+    while(traveled < wallWidth){//traveled < wallWidth){ //TEMPORAL < 3){
 
         console.log("Brick nº"+ TEMPORAL + "\n\n");
 
@@ -1379,9 +1379,28 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
 
             //update current and next node
             index += 2;
+
+            if ( index >= m_NodeFloorList.length -1){ //if traveled is greater than last floor means that we pass the right boundary
+                index = m_NodeFloorList.length-2;
+                console.log("BREAK!");
+                finalNode = m_NodeFloorList[index]; //The last floor. This makes a visual bug
+                nextFinalNode = m_NodeFloorList[index + 1];
+    
+                break;
+            }
+
+
     
             finalNode = m_NodeFloorList[index];
             nextFinalNode = m_NodeFloorList[index + 1];
+
+            console.log("INDEX: " + index);
+            console.log("listLENGTH: " + m_NodeFloorList.length);
+
+
+            console.log(m_NodeFloorList[index-1]);
+            console.log(finalNode);
+            console.log(nextFinalNode);
 
             if(nextFinalNode.position.y > peak){ //and save the most peak altitude //ERROR POCO FRECUENTE DE CUANDO NEXTFINALNODE IS UNDEFINED
     
@@ -1395,15 +1414,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
     
             }
     
-            //Se supone que aqui no debe llegar nunca pero por si acaso
-            if ( index >= m_NodeFloorList.lenght){ //if traveled is greater than last floor means that we pass the right boundary
-                index = m_NodeFloorList.lenght-1;
-                console.log("BREAK!");
-                finalNode = m_NodeFloorList[index];
-                nextFinalNode = m_NodeFloorList[index + 1];
-    
-                break;
-            }
+
     
         }
 
@@ -1450,6 +1461,9 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         
 
         //Push
+        // console.log("LEFT UP NODE" + leftUpNode);
+        // console.log("RIGHT UP NODE" + rightUpNode);
+
         nextNodeFloorList.push(leftUpNode, rightUpNode);
         m_GlobalBrickList.push(brick);
         temporalBrickList.push(brick);
@@ -1497,7 +1511,7 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
         var newEndEdge = getTheHorizontalEdge(newEndNode, "end");
 
         while(newEndEdge != null){ //Put the newStartNodeinTheExtreme
-
+            console.log(" != null");
             newEndNode = newEndEdge.startNode;
 
             newEndEdge = getTheHorizontalEdge(newEndNode, "end");
@@ -1524,7 +1538,7 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
 
     }
     else{ //Case 5: Search if there is a gap between startEdge and endEdge. Both in, but not in the same edge
-        console.log ("Caso 5");
+        console.log ("CASOOOO 5");
         var newStartNode = startNode;
         var newEndNode = endNode;
 
@@ -1540,7 +1554,7 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
             if(!startExtreme){
 
                 //Avanzamos startEdge y si no es null comparamos
-                var newStartNode = newStartEdge.endNode;
+                newStartNode = newStartEdge.endNode;
 
                 newStartEdge = getTheHorizontalEdge(newStartNode, "start");
 
@@ -1560,7 +1574,7 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
             if(!endExtreme){
 
                 //Avanzamos startEdge y si no es null comparamos
-                var newEndNode = newEndEdge.startNode;
+                newEndNode = newEndEdge.startNode;
 
                 newEndEdge = getTheHorizontalEdge(newEndNode, "end");
 
@@ -1596,6 +1610,31 @@ function checkNodeInterference(node){ //Insert the node if is in the middle of a
         }
 }
 
+function getEdgeBetweenTwoNodes(startNode, endNode){
+    m_GlobalEdgeList.forEach(edge => {
+
+        if(isHorizontalEdge(edge)){
+            if(edge.startNode.position.y == startNode.position.y && edge.startNode.position.x > startNode.position.x && edge.endNode.position.x < endNode.position.x){
+                console.log("HORIZONTAL edge found between");
+                return edge;
+            }
+        }
+        else if(isVerticalEdge(edge)){
+            if(edge.startNode.position.x == startNode.position.x && edge.startNode.position.y > startNode.position.y && edge.endNode.position.y < endNode.position.y){
+                console.log("VERTICAL edge found between");
+                return edge;
+            }
+        }
+        else{
+            console.error("this edge is perpendicular");
+        }
+
+
+    });
+
+    return null;
+}
+
 function createVerticalBrickEdge(startNode, endNode){
 
     //Check and insert nodes in the edges if it is the case
@@ -1609,7 +1648,17 @@ function createVerticalBrickEdge(startNode, endNode){
     if(startEdge == null && endEdge == null){ //CASE 1: Both out
         console.log ("Caso 1");
         //CHECK IF THERE IS AN FLOATING EDGE BETWEEN THIS SPACE
-        createEdge(startNode, endNode);
+        var edgeBetween = getEdgeBetweenTwoNodes(startNode, endNode);
+
+        if(edgeBetween != null){
+            createEdge(startNode, edgeBetween.startNode);
+            createEdge(edgeBetween.endNode, endNode);
+        }
+        else{
+            createEdge(startNode, endNode);
+        }
+
+
     }
     else if(startEdge == endEdge){ // CASE 2: The edge is already created.
         console.log ("Caso 2");
@@ -1624,7 +1673,7 @@ function createVerticalBrickEdge(startNode, endNode){
         var newEndEdge = getTheVerticalEdge(newEndNode, "end");
 
         while(newEndEdge != null){ //Put the newStartNodeinTheExtreme
-
+            console.log(" != null");
             newEndNode = newEndEdge.startNode;
 
             newEndEdge = getTheVerticalEdge(newEndNode, "end");
@@ -1652,7 +1701,7 @@ function createVerticalBrickEdge(startNode, endNode){
     }
     else{ //Case 5: Search if there is a gap between startEdge and endEdge
 
-        console.log ("Caso 5");
+        console.log ("CaSSSOoo 5");
         var newStartNode = startNode;
         var newEndNode = endNode;
 
@@ -1665,10 +1714,11 @@ function createVerticalBrickEdge(startNode, endNode){
 
         while(!startExtreme || !endExtreme){ // while the pointers don't reached the extreme //BUG DE QUE A VECES HACE BUBLE INFINITO
 
+            //console.log("iteracion");
             if(!startExtreme){
-
+                console.log("startExtreme");
                 //Avanzamos startEdge y si no es null comparamos
-                var newStartNode = newStartEdge.endNode;
+                newStartNode = newStartEdge.endNode;
 
                 newStartEdge = getTheVerticalEdge(newStartNode, "start");
 
@@ -1686,9 +1736,10 @@ function createVerticalBrickEdge(startNode, endNode){
             }
 
             if(!endExtreme){
+                console.log("endExtreme");
 
                 //Avanzamos startEdge y si no es null comparamos
-                var newEndNode = newEndEdge.startNode;
+                newEndNode = newEndEdge.startNode;
 
                 newEndEdge = getTheVerticalEdge(newEndNode, "end");
 
@@ -2135,6 +2186,7 @@ function searchEdgeFromEndNode(endNode){
         return edge;
     }
     else{
+        //console.log("End node don't have edge")
         return null;
     }
 }
@@ -2362,6 +2414,7 @@ function isWithinAEdge(node){
 function isHorizontalEdge(edge){
 
     if(edge == null){
+        console.warn("the edge is a null");
         return false;
     }
 
@@ -2376,6 +2429,7 @@ function isHorizontalEdge(edge){
 function isVerticalEdge(edge){
 
     if(edge == null){
+        console.warn("the edge is a null");
         return false;
     }
 
