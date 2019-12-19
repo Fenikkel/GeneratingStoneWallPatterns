@@ -1383,7 +1383,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
             finalNode = m_NodeFloorList[index];
             nextFinalNode = m_NodeFloorList[index + 1];
 
-            if(nextFinalNode.position.y > peak){ //and save the most peak altitude
+            if(nextFinalNode.position.y > peak){ //and save the most peak altitude //ERROR POCO FRECUENTE DE CUANDO NEXTFINALNODE IS UNDEFINED
     
                 peak = nextFinalNode.position.y;
     
@@ -1468,6 +1468,251 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
 }
 
 function createHorizontalBrickEdge(startNode, endNode){ //create correctly the edge (or the edges) of the brick
+
+
+    //Check and insert nodes in the edges if it is the case
+    checkNodeInterference(startNode);
+    checkNodeInterference(endNode);
+
+    var startEdge = getTheHorizontalEdge(startNode, "start"); // get the vertical edge of the start node if have one
+
+    var endEdge = getTheHorizontalEdge(endNode, "end");
+
+
+    if(startEdge == null && endEdge == null){ //CASE 1: Both out
+        console.log ("Caso 1");
+        //CHECK IF THERE IS AN FLOATING EDGE BETWEEN THIS SPACE
+        createEdge(startNode, endNode);
+    }
+    else if(startEdge == endEdge){ // CASE 2: The edge is already created.
+        console.log ("Caso 2");
+        return; //do nothing
+
+    }
+    else if(startEdge == null){ //CASE 3: Start node is out
+        console.log ("Caso 3");
+        //Advance end node
+        var newEndNode = endEdge.startNode;
+
+        var newEndEdge = getTheHorizontalEdge(newEndNode, "end");
+
+        while(newEndEdge != null){ //Put the newStartNodeinTheExtreme
+
+            newEndNode = newEndEdge.startNode;
+
+            newEndEdge = getTheHorizontalEdge(newEndNode, "end");
+        }
+
+        createEdge(startNode, newEndNode);
+
+    }
+    else if(endEdge == null){ //CASE 4: End node is out
+        console.log ("Caso 4");
+        //Advance start node
+        var newStartNode = startEdge.endNode;
+
+        var newStartEdge = getTheHorizontalEdge(newStartNode, "start");
+
+        while(newStartEdge != null){ //Put the newStartNodeinTheExtreme
+
+            newStartNode = newStartEdge.endNode;
+
+            newStartEdge = getTheHorizontalEdge(newStartNode, "start");
+        }
+
+        createEdge(newStartNode, endNode);
+
+    }
+    else{ //Case 5: Search if there is a gap between startEdge and endEdge. Both in, but not in the same edge
+        console.log ("Caso 5");
+        var newStartNode = startNode;
+        var newEndNode = endNode;
+
+        var newStartEdge = startEdge;
+        var newEndEdge = endEdge;
+
+        var startExtreme = false;
+        var endExtreme = false;
+
+
+        while(!startExtreme || !endExtreme){ // while the pointers don't reached the extreme
+
+            if(!startExtreme){
+
+                //Avanzamos startEdge y si no es null comparamos
+                var newStartNode = newStartEdge.endNode;
+
+                newStartEdge = getTheHorizontalEdge(newStartNode, "start");
+
+                if(newStartEdge != null){
+                    
+                    if(newStartEdge == newEndEdge){ //there is no gap
+                        return; //cuidado con este return por si hay cosas debajo de estos if else
+                    }
+
+                }
+                else{
+                    //newStartNode is in the extreme
+                    startExtreme = true;
+                }
+            }
+
+            if(!endExtreme){
+
+                //Avanzamos startEdge y si no es null comparamos
+                var newEndNode = newEndEdge.startNode;
+
+                newEndEdge = getTheHorizontalEdge(newEndNode, "end");
+
+                if(newEndEdge != null){
+                    
+                    if(newStartEdge == newEndEdge){ //there is no gap
+                        return; //cuidado con este return por si hay cosas debajo de estos if else
+                    }
+
+                }
+                else{
+                    //newEndNode is in the extreme
+                    endExtreme = true;
+                }
+            }
+        }
+
+        createEdge(newStartNode, newEndNode);
+
+    }
+
+}
+
+function checkNodeInterference(node){ //Insert the node if is in the middle of an edge (not in the corners)
+
+        var edgeInterfered = isWithinAEdge(node); // get the edge where the start node is within. Null if not.
+
+        if(edgeInterfered != null){ //check if it's within a edge
+            
+            insertNodeInTheEdge(node, edgeInterfered);
+    
+            console.log("...INSERTED...");    
+        }
+}
+
+function createVerticalBrickEdge(startNode, endNode){
+
+    //Check and insert nodes in the edges if it is the case
+    checkNodeInterference(startNode);
+    checkNodeInterference(endNode);
+    
+    var startEdge = getTheVerticalEdge(startNode, "start"); // get the vertical edge of the start node if have one
+
+    var endEdge = getTheVerticalEdge(endNode, "end");
+
+    if(startEdge == null && endEdge == null){ //CASE 1: Both out
+        console.log ("Caso 1");
+        //CHECK IF THERE IS AN FLOATING EDGE BETWEEN THIS SPACE
+        createEdge(startNode, endNode);
+    }
+    else if(startEdge == endEdge){ // CASE 2: The edge is already created.
+        console.log ("Caso 2");
+        return; //do nothing
+
+    }
+    else if(startEdge == null){ //CASE 3: Start node is out
+        console.log ("Caso 3");
+        //Advance end node
+        var newEndNode = endEdge.startNode;
+
+        var newEndEdge = getTheVerticalEdge(newEndNode, "end");
+
+        while(newEndEdge != null){ //Put the newStartNodeinTheExtreme
+
+            newEndNode = newEndEdge.startNode;
+
+            newEndEdge = getTheVerticalEdge(newEndNode, "end");
+        }
+
+        createEdge(startNode, newEndNode);
+
+    }
+    else if(endEdge == null){ //CASE 4: End node is out
+        console.log ("Caso 4");
+        //Advance start node
+        var newStartNode = startEdge.endNode;
+
+        var newStartEdge = getTheVerticalEdge(newStartNode, "start");
+
+        while(newStartEdge != null){ //Put the newStartNodeinTheExtreme
+
+            newStartNode = newStartEdge.endNode;
+
+            newStartEdge = getTheVerticalEdge(newStartNode, "start");
+        }
+
+        createEdge(newStartNode, endNode);
+
+    }
+    else{ //Case 5: Search if there is a gap between startEdge and endEdge
+
+        console.log ("Caso 5");
+        var newStartNode = startNode;
+        var newEndNode = endNode;
+
+        var newStartEdge = startEdge;
+        var newEndEdge = endEdge;
+
+        var startExtreme = false;
+        var endExtreme = false;
+
+
+        while(!startExtreme || !endExtreme){ // while the pointers don't reached the extreme //BUG DE QUE A VECES HACE BUBLE INFINITO
+
+            if(!startExtreme){
+
+                //Avanzamos startEdge y si no es null comparamos
+                var newStartNode = newStartEdge.endNode;
+
+                newStartEdge = getTheVerticalEdge(newStartNode, "start");
+
+                if(newStartEdge != null){
+                    
+                    if(newStartEdge == newEndEdge){ //there is no gap
+                        return; //cuidado con este return por si hay cosas debajo de estos if else
+                    }
+
+                }
+                else{
+                    //newStartNode is in the extreme
+                    startExtreme = true;
+                }
+            }
+
+            if(!endExtreme){
+
+                //Avanzamos startEdge y si no es null comparamos
+                var newEndNode = newEndEdge.startNode;
+
+                newEndEdge = getTheVerticalEdge(newEndNode, "end");
+
+                if(newEndEdge != null){
+                    
+                    if(newStartEdge == newEndEdge){ //there is no gap
+                        return; //cuidado con este return por si hay cosas debajo de estos if else
+                    }
+
+                }
+                else{
+                    //newEndNode is in the extreme
+                    endExtreme = true;
+                }
+            }
+        }
+
+        createEdge(newStartNode, newEndNode);
+
+    }
+
+}
+
+function createHorizontalBrickEdgeCopy(startNode, endNode){ //create correctly the edge (or the edges) of the brick
 
     var start = startNode;
     var end = endNode;
@@ -1576,77 +1821,6 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
 
         //all already done
         console.log("BOTH IN (or in the corners)");
-    }
-
-}
-
-function checkNodeInterference(node){ //Insert the node if is in the middle of an edge (not in the corners)
-
-        var edgeInterfered = isWithinAEdge(node); // get the edge where the start node is within. Null if not.
-
-        if(edgeInterfered != null){ //check if it's within a edge
-            
-            insertNodeInTheEdge(node, edgeInterfered);
-    
-            console.log("...INSERTED...");    
-        }
-}
-
-function createVerticalBrickEdge(){
-
-    //Check and insert nodes in the edges if it is the case
-    checkNodeInterference(startNode);
-    checkNodeInterference(endNode);
-
-    //Get the corresponding edges involved
-    var startEdgeList = searchEdgeFromStartNode(startNode); // search if the start node is in the cortner instead of within
-    
-    var startEdge = null;
-    var vertical = false;
-
-    if(startEdgeList != null){
-
-        for (let index = 0; index < startEdgeList.length; index++) {
-            const currentEdge = startEdgeList[index];
-            if(isVerticalEdge(currentEdge)){
-                vertical = true;
-                startEdge = currentEdge;
-                break;
-            }
-            
-        }
-
-    }
-
-    var endEdgeList = searchEdgeFromEndNode(endNode);
-    var endEdge = null;
-    vertical = false;
-    
-    if(endEdgeList != null){
-
-        for (let index = 0; index < endEdgeList.length; index++) {
-            const currentEdge = endEdgeList[index];
-            if(isVerticalEdge(currentEdge)){
-                vertical = true;
-                endEdge = currentEdge;
-                break;
-            }
-            
-        }
-
-    }
-
-    if(startEdge == endEdge){
-
-        //do nothing
-
-    }
-    else{
-
-        // subimos a la otra punta de los edges y buscamos si es la punta de otro edge. Cuando ya no lo son, ya podemos juntarlos.
-        //crear metodos de lo repetitivo de arriba porque me serviran para aqui tambien.
-        //cuidado que no se crucen.
-
     }
 
 }
@@ -1916,7 +2090,7 @@ function insertNodeInTheEdge(node, edge){
 
 }
 
-function searchEdgeFromStartNode(startNode){
+function searchEdgeFromStartNode(startNode){ //return a list of edges where the startNode is involved
 
     var currentStartNode; 
     var edge = [];
@@ -1931,7 +2105,7 @@ function searchEdgeFromStartNode(startNode){
         
     }
 
-    console.log("Searchedgefromstart node = " + edge);
+    //console.log("Searchedgefromstart node = " + edge);
 
     if(edge.length > 0){
         return edge;
@@ -2212,5 +2386,73 @@ function isVerticalEdge(edge){
         return false;
     }
 }
+
+function getTheVerticalEdge(node, mode){ //mode: "start" or "end" for get the vertical edge of start node or end node
+
+        var edgeList = null; // can be the start node or end node list
+
+        //Get the corresponding edges involved
+        if(mode == "start"){
+            edgeList = searchEdgeFromStartNode(node); // search if the start node is in the cortner instead of within (this can only be 2 edges max and 0 min)
+        }
+        else if(mode == "end"){
+            edgeList = searchEdgeFromEndNode(node);
+        }
+        else{
+            console.error("Misspelling on mode");
+        }
+
+    
+        if(edgeList != null){
+    
+            for (let index = 0; index < edgeList.length; index++) { //for every edge of the node (2 max)
+                const currentEdge = edgeList[index];
+                if(isVerticalEdge(currentEdge)){ //the node only have one vertical edge where it is the start node or the end node.
+
+                    return currentEdge;
+                }
+                
+            }
+    
+        }
+
+        return null; // there is no vertical edge
+
+}
+
+function getTheHorizontalEdge(node, mode){ //mode: "start" or "end" for get the vertical edge of start node or end node
+
+        var edgeList = null; // can be the start node or end node list
+
+        //Get the corresponding edges involved
+        if(mode == "start"){
+            edgeList = searchEdgeFromStartNode(node); // search if the start node is in the cortner instead of within (this can only be 2 edges max and 0 min)
+        }
+        else if(mode == "end"){
+            edgeList = searchEdgeFromEndNode(node);
+        }
+        else{
+            console.error("Misspelling on mode");
+        }
+
+    
+        if(edgeList != null){
+    
+            for (let index = 0; index < edgeList.length; index++) { //for every edge of the node (2 max)
+                const currentEdge = edgeList[index];
+                if(isHorizontalEdge(currentEdge)){ //the node only have one horizontal edge where it is the start node or the end node.
+
+                    return currentEdge;
+                }
+                
+            }
+    
+        }
+
+        return null; // there is no horizontal edge
+
+}
+
+
 
 

@@ -298,7 +298,7 @@ function paintBrickRow(temporalBrickList){
 function paintEdges(){
 
     //m_Context.beginPath();
-    m_Context.lineWidth = 1; // por debajo de 1 solo baja la intensidad
+    m_Context.lineWidth = 2; // por debajo de 1 solo baja la intensidad
 
     var currentEdge;
     var currentStartNode;
