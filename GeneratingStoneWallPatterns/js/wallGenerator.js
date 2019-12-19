@@ -1476,7 +1476,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
     m_NodeFloorList = nextNodeFloorList;
     // paintFloor(); // no pinta si no tiene las referencias a los vecinos
     // paintBrickRow(temporalBrickList);
-    fillBricks();
+    //fillBricks();
 
     
 }
@@ -1495,7 +1495,16 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
 
     if(startEdge == null && endEdge == null){ //CASE 1: Both out
         console.log ("Caso 1");
-        //CHECK IF THERE IS AN FLOATING EDGE BETWEEN THIS SPACE
+        //CHECK IF THERE IS more than a one FLOATING EDGE BETWEEN THIS SPACE
+        var edgeBetween = getEdgeBetweenTwoNodes(startNode, endNode);
+
+        if(edgeBetween != null){
+            createEdge(startNode, edgeBetween.startNode);
+            createEdge(edgeBetween.endNode, endNode);
+        }
+        else{
+            createEdge(startNode, endNode);
+        }
         createEdge(startNode, endNode);
     }
     else if(startEdge == endEdge){ // CASE 2: The edge is already created.
