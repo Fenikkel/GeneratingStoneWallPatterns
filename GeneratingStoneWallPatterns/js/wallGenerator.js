@@ -25,14 +25,21 @@ function makeWallJointPattern(){
     tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+
     console.log("Global node list LENGTH: "+ m_GlobalNodeList.length);
     console.log("Global brick list LENGTH: "+ m_GlobalBrickList.length);
     console.log("Global edge list LENGTH: "+ m_GlobalEdgeList.length);
 
-    paintWall();
+    //paintWall();
 
-    //paintEdges();
-    //paintNodes();
+    paintEdges();
+    paintNodes();
 
 }
 
@@ -82,8 +89,8 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
 
         console.log("Brick nº"+ TEMPORAL + "\n\n");
 
-        if(noise >= 1){
-            noise = 0.99; //Evade invisible bricks and noise excess
+        if(noise >= 0.9){
+            noise = 0.9; //Evade invisible bricks and noise excess
         }
 
         //random * (max - min) + min;
@@ -414,6 +421,7 @@ function createVerticalBrickEdge(startNode, endNode){
 
     }
     else{ //Case 5: Search if there is a gap between startEdge and endEdge
+
 
         console.log ("CaSSSOoo 5");
         var newStartNode = startNode;
@@ -794,6 +802,40 @@ function getTheHorizontalEdge(node, mode){ //mode: "start" or "end" for get the 
         }
 
         return null; // there is no horizontal edge
+
+}
+
+function displaceNodes(displace){
+
+	for(let index = 0; index < m_GlobalNodeList.length; index++){
+		var currentNode = m_GlobalNodeList[index];
+
+		if(currentNode.right != null && currentNode.left == null){
+
+			currentNode.position.x += displace;
+
+		}
+		else if(currentNode.right == null && currentNode.left != null){
+
+			currentNode.position.x -= displace;
+
+		}
+		else if(currentNode.upper != null && currentNode.lower == null){
+
+			currentNode.position.y += displace;
+
+		}
+		else if(currentNode.upper == null && currentNode.lower != null){
+
+			currentNode.position.y -= displace;
+
+		}
+		else{
+			//do nothing.
+		}
+
+	}
+
 
 }
 
