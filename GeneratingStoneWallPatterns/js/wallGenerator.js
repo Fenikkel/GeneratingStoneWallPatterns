@@ -36,10 +36,11 @@ function makeWallJointPattern(){
     console.log("Global brick list LENGTH: "+ m_GlobalBrickList.length);
     console.log("Global edge list LENGTH: "+ m_GlobalEdgeList.length);
 
-    //paintWall();
+    paintWall();
 
-    paintEdges();
-    paintNodes();
+    //paintEdges();
+    //paintNodes();
+    //debugPaintEdges();
 
 }
 
@@ -186,10 +187,13 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         // updateVerticalNeighbors(rightDownNode, rightUpNode);
 
         console.log("HORIZONTAL DOWN");
-        createHorizontalBrickEdge(leftDownNode, rightDownNode);
+        createHorizontalBrickEdge(leftDownNode, rightDownNode, "lower");
         console.log("\n\n");
 
-        createEdge(leftUpNode, rightUpNode);
+        var tempEdge = createEdge(leftUpNode, rightUpNode);
+
+        tempEdge.rightSide = true; 
+
 
         console.log("VERTICAL LEFT");
         createVerticalBrickEdge(leftDownNode, leftUpNode);
@@ -225,12 +229,12 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
     m_NodeFloorList = nextNodeFloorList;
     // paintFloor(); // no pinta si no tiene las referencias a los vecinos
     // paintBrickRow(temporalBrickList);
-    //fillBricks();
+    // fillBricks();
 
     
 }
 
-function createHorizontalBrickEdge(startNode, endNode){ //create correctly the edge (or the edges) of the brick
+function createHorizontalBrickEdge(startNode, endNode, orientation){ //create correctly the edge (or the edges) of the brick
 
 
     //Check and insert nodes in the edges if it is the case
@@ -241,6 +245,8 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
 
     var endEdge = getTheHorizontalEdge(endNode, "end");
 
+    var tempEdge;
+
 
     if(startEdge == null && endEdge == null){ //CASE 1: Both out
         console.log ("Caso 1");
@@ -248,16 +254,58 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
         var edgeBetween = getEdgeBetweenTwoNodes(startNode, endNode);
 
         if(edgeBetween != null){
-            createEdge(startNode, edgeBetween.startNode);
-            createEdge(edgeBetween.endNode, endNode);
+
+			if(orientation == "lower"){
+            
+				tempEdge = createEdge(startNode, edgeBetween.startNode);
+
+				tempEdge.leftSide = true;
+
+				tempEdge = createEdge(edgeBetween.endNode, endNode);
+
+				tempEdge.leftSide = true;
+
+			}
+			else if(orientation == "upper"){
+            
+				tempEdge = createEdge(startNode, edgeBetween.startNode);
+
+				tempEdge.rightSide = true;
+
+				tempEdge = createEdge(edgeBetween.endNode, endNode);
+
+				tempEdge.rightSide = true;
+
+			}
+
+            
         }
-        else{
-            createEdge(startNode, endNode);
+        else{ //never arrives...
+
+            tempEdge = createEdge(startNode, endNode);
+
+        	if(orientation == "lower"){
+
+            	tempEdge.leftSide = true;
+            }
+            else if(orientation == "upper"){
+
+            	tempEdge.rightSide = true;
+            }
         }
-        createEdge(startNode, endNode);
+
+
     }
     else if(startEdge == endEdge){ // CASE 2: The edge is already created.
         console.log ("Caso 2");
+
+		if(orientation == "lower"){
+        	startEdge.leftSide = true;
+        }
+        else if(orientation == "upper"){
+        	startEdge.rightSide = true;
+        }
+
         return; //do nothing
 
     }
@@ -275,7 +323,18 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
             newEndEdge = getTheHorizontalEdge(newEndNode, "end");
         }
 
-        createEdge(startNode, newEndNode);
+        tempEdge = createEdge(startNode, newEndNode);
+
+        if(orientation == "lower"){
+
+			tempEdge.leftSide = true;
+
+		}
+		else if(orientation == "upper"){
+
+			tempEdge.rightSide = true;
+
+		}
 
     }
     else if(endEdge == null){ //CASE 4: End node is out
@@ -292,7 +351,18 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
             newStartEdge = getTheHorizontalEdge(newStartNode, "start");
         }
 
-        createEdge(newStartNode, endNode);
+        tempEdge = createEdge(newStartNode, endNode);
+
+        if(orientation == "lower"){
+
+			tempEdge.leftSide = true;
+
+		}
+		else if(orientation == "upper"){
+
+			tempEdge.rightSide = true;
+
+		}
 
     }
     else{ //Case 5: Search if there is a gap between startEdge and endEdge. Both in, but not in the same edge
@@ -350,7 +420,18 @@ function createHorizontalBrickEdge(startNode, endNode){ //create correctly the e
             }
         }
 
-        createEdge(newStartNode, newEndNode);
+        tempEdge = createEdge(newStartNode, newEndNode);
+
+        if(orientation == "lower"){
+
+			tempEdge.leftSide = true;
+
+		}
+		else if(orientation == "upper"){
+
+			tempEdge.rightSide = true;
+
+		}
 
     }
 
@@ -539,8 +620,10 @@ function updateHorizontalNeighbors(leftNode, rightNode){
 
 function insertNodeInTheEdge(node, edge){
 
-    var firstEdge = new Edge(edge.startNode, node, null, 0);
-    var secondEdge = new Edge(node, edge.endNode, null, 0);
+    var firstEdge = createEdge(edge.startNode, node); //new Edge(edge.startNode, node, null, 0);
+    var secondEdge = createEdge(node, edge.endNode); //new Edge(node, edge.endNode, null, 0);
+
+    //FER EL RIGHT SIDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEs
 
     for (var i = m_GlobalEdgeList.length - 1 ; i >= 0 ; i--) {
         if (m_GlobalEdgeList[i] == edge) {
@@ -551,6 +634,7 @@ function insertNodeInTheEdge(node, edge){
 
     //m_GlobalEdgeList = m_GlobalEdgeList.filter(e => e !== edge); //quita edge pero de una forma menos eficiente?
 
+/*
     //Update links
     if(firstEdge.startNode.position.x == firstEdge.endNode.position.x){ // is a vertical edge. secondEdge should be too
         updateVerticalNeighbors(firstEdge.startNode, firstEdge.endNode);
@@ -560,8 +644,9 @@ function insertNodeInTheEdge(node, edge){
         updateHorizontalNeighbors(firstEdge.startNode, firstEdge.endNode);
         updateHorizontalNeighbors(secondEdge.startNode, secondEdge.endNode);
     }
+    */
 
-    m_GlobalEdgeList.push(firstEdge, secondEdge);
+    //m_GlobalEdgeList.push(firstEdge, secondEdge);
 
 
 }
@@ -654,8 +739,10 @@ function createEdge(startNode, endNode){ //startNode is always less value than e
         updateHorizontalNeighbors(startNode, endNode);
     }
 
-    var edge = new Edge(startNode,endNode, null, 0);
+    var edge = new Edge(startNode,endNode, null, false, false);
     m_GlobalEdgeList.push(edge);
+
+    return edge;
 
 }
 
