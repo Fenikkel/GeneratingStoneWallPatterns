@@ -347,7 +347,7 @@ function debugPaintEdges(){
 
         currentEdge = m_GlobalEdgeList[index];
 
-        if(currentEdge.rightSide || currentEdge.leftSide){ // pintem els que si tenen true
+        if(currentEdge.rightSide && currentEdge.leftSide){ // pintem els que si tenen true
 
             m_Context.beginPath();    
             currentEdge = m_GlobalEdgeList[index];
@@ -363,12 +363,44 @@ function debugPaintEdges(){
 
         
             m_Context.stroke();
-
-
         }
+    }
+}
+
+function pointPaintEdges(){
+
+    //dibuixar perpendicular segons si te rightSide o left
+    //m_Context.beginPath();
+    m_Context.lineWidth = 2; // por debajo de 1 solo baja la intensidad
+    m_Context.strokeStyle = "black";
+
+    var currentEdge;
+    var currentStartNode;
+    var currentEndNode;
+
+    var y;
+
+    for(var index = 0; index < m_GlobalEdgeList.length ; index ++){
+
+        currentEdge = m_GlobalEdgeList[index];
+
+        if(currentEdge.rightSide && currentEdge.leftSide){ // pintem els que si tenen true
+
+            m_Context.beginPath();    
+            currentEdge = m_GlobalEdgeList[index];
+            currentStartNode = currentEdge.startNode;
+            currentEndNode = currentEdge.endNode;
+
+            y = m_CanvasHeight - currentStartNode.position.y;
+            m_Context.moveTo(currentStartNode.position.x, y);
+
+            y = m_CanvasHeight - currentEndNode.position.y;
+            m_Context.lineTo(currentEndNode.position.x ,y);
 
 
-
+        
+            m_Context.stroke();
+        }
     }
 }
 

@@ -234,7 +234,7 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
     m_NodeFloorList = nextNodeFloorList;
     // paintFloor(); // no pinta si no tiene las referencias a los vecinos
     // paintBrickRow(temporalBrickList);
-    // fillBricks();
+    fillBricks();
 
     
 }
@@ -1096,6 +1096,8 @@ function updateSides(){
 			console.warn("BORDER");
 		}
 		else{
+
+			
 			//Inizialice the loop
 			
 			var candidates = initializeStoneArea(neightbourNode); //clockwise, decide the neightbour and return the candidates. Probably the neightbour is the right or the lower
