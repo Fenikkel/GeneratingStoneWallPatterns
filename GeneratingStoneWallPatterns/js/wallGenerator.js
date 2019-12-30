@@ -22,25 +22,28 @@ function makeWallJointPattern(){
 
     //build rows
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    
+    /*tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
     tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    */
 
 
-    console.log("Global node list LENGTH: "+ m_GlobalNodeList.length);
-    console.log("Global brick list LENGTH: "+ m_GlobalBrickList.length);
-    console.log("Global edge list LENGTH: "+ m_GlobalEdgeList.length);
+    console.log("Global node list LENGTH: " + m_GlobalNodeList.length);
+    console.log("Global brick list LENGTH: " + m_GlobalBrickList.length);
+    console.log("Global edge list LENGTH: " + m_GlobalEdgeList.length);
 
-    paintWall();
+    //paintWall();
 
-    //paintEdges();
-    //paintNodes();
+    paintEdges();
+    paintNodes();
     //debugPaintEdges();
 
 }
@@ -191,9 +194,10 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         createHorizontalBrickEdge(leftDownNode, rightDownNode, "lower");
         console.log("\n\n");
 
-        var tempEdge = createEdge(leftUpNode, rightUpNode);
+		createEdge(leftUpNode, rightUpNode);
+        //var tempEdge = createEdge(leftUpNode, rightUpNode);
 
-        tempEdge.rightSide = true; 
+        //tempEdge.rightSide = true; 
 
 
         console.log("VERTICAL LEFT");
@@ -256,6 +260,9 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
 
         if(edgeBetween != null){
 
+        	createEdge(startNode, edgeBetween.startNode);
+        	createEdge(edgeBetween.endNode, endNode);
+        	/*
 			if(orientation == "lower"){
             
 				tempEdge = createEdge(startNode, edgeBetween.startNode);
@@ -278,11 +285,14 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
 				tempEdge.rightSide = true;
 
 			}
+			*/
 
             
         }
         else{ //never arrives...
 
+			createEdge(startNode, endNode);
+			/*
             tempEdge = createEdge(startNode, endNode);
 
         	if(orientation == "lower"){
@@ -293,19 +303,21 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
 
             	tempEdge.rightSide = true;
             }
+            */
         }
 
 
     }
     else if(startEdge == endEdge){ // CASE 2: The edge is already created.
         console.log ("Caso 2");
-
+        /*
 		if(orientation == "lower"){
         	startEdge.leftSide = true;
         }
         else if(orientation == "upper"){
         	startEdge.rightSide = true;
         }
+        */
 
         return; //do nothing
 
@@ -324,6 +336,9 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
             newEndEdge = getTheHorizontalEdge(newEndNode, "end");
         }
 
+        createEdge(startNode, newEndNode);
+
+        /*
         tempEdge = createEdge(startNode, newEndNode);
 
         if(orientation == "lower"){
@@ -336,6 +351,7 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
 			tempEdge.rightSide = true;
 
 		}
+		*/
 
     }
     else if(endEdge == null){ //CASE 4: End node is out
@@ -352,6 +368,8 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
             newStartEdge = getTheHorizontalEdge(newStartNode, "start");
         }
 
+        createEdge(newStartNode, endNode);
+        /*
         tempEdge = createEdge(newStartNode, endNode);
 
         if(orientation == "lower"){
@@ -364,6 +382,7 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
 			tempEdge.rightSide = true;
 
 		}
+		*/
 
     }
     else{ //Case 5: Search if there is a gap between startEdge and endEdge. Both in, but not in the same edge
@@ -421,6 +440,8 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
             }
         }
 
+		createEdge(newStartNode, newEndNode);
+		/*
         tempEdge = createEdge(newStartNode, newEndNode);
 
         if(orientation == "lower"){
@@ -433,6 +454,7 @@ function createHorizontalBrickEdge(startNode, endNode, orientation){ //create co
 			tempEdge.rightSide = true;
 
 		}
+		*/
 
     }
 
@@ -887,8 +909,9 @@ function getTheHorizontalEdge(node, mode){ //mode: "start" or "end" for get the 
     
         }
 
-        return null; // there is no horizontal edge
 
+
+        return null; // there is no horizontal edge
 }
 
 function displaceNodes(displace){
@@ -926,12 +949,129 @@ function displaceNodes(displace){
 }
 
 
+function checkCandidate(node, candidate){
+
+	var candidates = [];
+
+	switch(candidate){
+
+		case "upper":
+
+			if(node.upper != null){
+
+
+				//Set edge side
+				var edge = getTheVerticalEdge(node, "start");
+
+				if(edge != null){
+
+					edge.rightSide = true;
+
+				}
+				else{ 
+					console.error("Something goes wrong. The node or the edge is missing");
+				}
+
+				//Update
+				node = node.upper;
+				candidates.push("right", "upper");
+
+			}
+			return candidates; //length = 0 if the candidate fails
+
+		case "lower":
+
+			if(node.lower != null){
+
+
+				//Set edge side
+				var edge = getTheVerticalEdge(node, "end");
+
+				if(edge != null){
+
+					edge.leftSide = true;
+
+				}
+				else{ 
+					console.error("Something goes wrong. The node or the edge is missing");
+				}
+
+				//Update
+				node = node.lower;
+				candidates.push("left", "lower");
+
+			}
+			return candidates; //length = 0 if the candidate fails
+
+		case "right":
+
+			if(node.right != null){
+
+
+				//Set edge side
+				var edge = getTheHorizontalEdge(node, "start");
+
+				if(edge != null){
+
+					edge.rightSide = true;
+
+				}
+				else{
+					console.error("Something goes wrong. The node or the edge is missing");
+				}
+
+				//Update
+				node = node.right;
+				candidates.push("lower", "right");
+
+			}
+			return candidates; //length = 0 if the candidate fails
+
+		case "left":
+
+			if(node.left != null){
+
+
+				//Set edge side
+				var edge = getTheHorizontalEdge(node, "end");
+
+				if(edge != null){
+
+					edge.leftSide = true;
+
+				}
+				else{ 
+					console.error("Something goes wrong. The node or the edge is missing");
+				}
+
+				//Update
+				node = node.left;
+				candidates.push("upper", "left");
+
+			}
+			return candidates; //length = 0 if the candidate fails
+
+		default:
+
+			console.error("Candidate misspelled: " + candidate);
+
+	}
+
+	return candidates;
+}
+
+
 function updateSides(){
+
 
 	var currentNode;
 	var neightbourNode;
 	var firstCandidate;
 	var secondCandidate;
+
+	var ground = false;
+	var leftBorder = false;
+	var rightBorder = false;
 
 
 	for(let index = 0; index < m_GlobalNodeList.length; index++){
@@ -939,58 +1079,103 @@ function updateSides(){
 		currentNode = m_GlobalNodeList[index];
 		neightbourNode = m_GlobalNodeList[index];
 
-		//si te el mateix x que els bordes tractar diferent (igual que en la y)
+		//Check the border nodes (we don't process them, they can do errors)
+		if(currentNode.position.y == 0){
+			ground = true;
+		}
+		if(currentNode.position.x == m_LeftOffset){
+			leftBorder = true;
+		}
+		if(currentNode.position.x == m_CanvasWidth - m_RightOffset){
+			rightBorder = true;
+		}
 
-		if(neightbourNode.upper != null){
-			neightbourNode = neightbourNode.upper;
-			firstCandidate = "right";
-			secondCandidate = "upper";
-		}
-		else if(neightbourNode.right != null){
-			neightbourNode = neightbourNode.right;
-			firstCandidate = "lower";
-			secondCandidate = "right";
-		}
-		else if(neightbourNode.lower != null){
-			neightbourNode = neightbourNode.lower;
-			firstCandidate = "left";
-			secondCandidate = "lower";
-		}
-		else if(neightbourNode.left != null){
-			neightbourNode = neightbourNode.left;
-			firstCandidate = "upper";
-			secondCandidate = "left";
+
+		if(ground || leftBorder || rightBorder){ //do nothing, can do errors
+			//neightbour and currend node will be equals
+			console.warn("BORDER");
 		}
 		else{
-			console.error("This node doesn't have neightbours");
-			console.error(neightbourNode);
+			//Inizialice the loop
+			
+			var candidates = initializeStoneArea(neightbourNode); //clockwise, decide the neightbour and return the candidates. Probably the neightbour is the right or the lower
+			
+			firstCandidate = candidates[0];
+			secondCandidate = candidates[1];
+			//console.log("First: " + firstCandidate);
+			//console.log("Second: " + secondCandidate);
 
 		}
 
+
+
+
 		do{
-			switch(firstCandidate){
 
-				case "upper":
-					if(neightbourNode.upper != null){
-
-						neightbourNode = neightbourNode.upper;
-
-					}
-					break;
-				case "lower":
-					break;
-				case "right":
-					break;
-				case "left":
-					break;
-
+			if(ground || leftBorder || rightBorder){ //do nothing, can do errors
+				console.warn("BROKE");
+				break;
 			}
 
+			
+			var candidates = checkCandidate(neightbourNode, firstCandidate); //Check first candidate
 
+			if(candidates.length == 2){
+
+				firstCandidate = candidates[0];
+				secondCandidate = candidates[1];
+
+			}
+			else{
+				candidates = checkCandidate(neightbourNode, secondCandidate); //Check second candidate
+
+				if(candidates.length == 2){
+
+					firstCandidate = candidates[0];
+					secondCandidate = candidates[1];
+
+				}
+				else{
+					console.error("Candidates lost. Maybe there is no loop in the brick?")
+				}
+			}
 
 		}
 		while(currentNode != neightbourNode);
+
+		//Reset
+
+		ground = false;
+		leftBorder = false;
+		rightBorder = false;
 	}
+}
+
+
+function initializeStoneArea(node){
+
+	var neightbours = ["right", "lower", "left", "upper"]; //The order it's important. There is enought with right and lower.
+	var candidates = [];
+
+	var index = 0;
+
+
+	do{
+		candidates = checkCandidate(node, neightbours[index]);
+		index++;
+
+		if(index > 3){
+			console.error("Node without neightbours");
+			return;
+
+		}
+
+	}
+	while(candidates.length != 2);
+
+
+	return candidates;
+
 }
 
 

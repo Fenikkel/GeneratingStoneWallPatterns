@@ -4,7 +4,7 @@ class Edge {
       this.endNode = endNode; //final node?
       this.position = position; //initial pos- final pos??
       this.numberOfPoints = numberOfPoints; // 0 means a brick wall
-      this.rightSide = rightSide; //clockwise, from start to end in clockwise order, the right side is occupied or not
+      this.rightSide = rightSide; // true or false //clockwise, from start to end in clockwise order, the right side is occupied or not
       this.leftSide = leftSide;
 
     }

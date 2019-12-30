@@ -83,17 +83,20 @@
 
   m_OkButton.addEventListener("click", function() {
     //makeWallJointPattern();
-    displaceNodes(2);
+    //displaceNodes(2);
+    updateSides();
 
     //limpiamos canvas
-    m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
-    m_Context.fillStyle = "gray";//"#f5f0f0";
-    m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
+    //m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
+    //m_Context.fillStyle = "gray";//"#f5f0f0";
+    //m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
 
     //paintWall();
 
-    paintEdges();
-    paintNodes();
+    //paintEdges();
+    //paintNodes();
+
+    debugPaintEdges();
   })
 
 
