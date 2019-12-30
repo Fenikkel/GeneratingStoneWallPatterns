@@ -56,6 +56,30 @@
     makeWallJointPattern();
   })
 
+  m_LeftOffsetInput.addEventListener('change', function() {
+
+    m_LeftOffset = parseInt(m_LeftOffsetInput.value);
+
+    if(m_LeftOffset >= m_CanvasWidth){
+      m_LeftOffset = m_CanvasWidth - 1;
+      m_LeftOffsetInput.value = m_LeftOffset;
+    }
+
+    makeWallJointPattern();
+  })
+
+  m_RightOffsetInput.addEventListener('change', function() {
+
+    m_RightOffset = parseInt(m_RightOffsetInput.value);
+
+    if(m_RightOffset >= m_CanvasWidth){
+      m_RightOffset = m_CanvasWidth - 1;
+      m_RightOffsetInput.value = m_RightOffset;
+    }
+
+    makeWallJointPattern();
+  })
+
 
   m_OkButton.addEventListener("click", function() {
     //makeWallJointPattern();

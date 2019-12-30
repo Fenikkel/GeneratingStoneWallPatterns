@@ -13,24 +13,25 @@ function makeWallJointPattern(){
     m_GlobalBrickList.length = 0;
 
     //create first floor nodes
-    var startFloorNode = createNode(10, 0);
-    var endFloorNode = createNode(m_CanvasWidth-10, 0);
+    var startFloorNode = createNode(m_LeftOffset, 0);
+    var endFloorNode = createNode(m_CanvasWidth - m_RightOffset, 0);
     m_NodeFloorList.push(startFloorNode,endFloorNode);
 
     //create the edge of the first floor
     createEdge(startFloorNode, endFloorNode);
 
     //build rows
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(10, m_CanvasWidth-10, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
 
     console.log("Global node list LENGTH: "+ m_GlobalNodeList.length);
     console.log("Global brick list LENGTH: "+ m_GlobalBrickList.length);
@@ -623,8 +624,6 @@ function insertNodeInTheEdge(node, edge){
     var firstEdge = createEdge(edge.startNode, node); //new Edge(edge.startNode, node, null, 0);
     var secondEdge = createEdge(node, edge.endNode); //new Edge(node, edge.endNode, null, 0);
 
-    //FER EL RIGHT SIDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEs
-
     for (var i = m_GlobalEdgeList.length - 1 ; i >= 0 ; i--) {
         if (m_GlobalEdgeList[i] == edge) {
             m_GlobalEdgeList.splice(i, 1);
@@ -924,6 +923,74 @@ function displaceNodes(displace){
 	}
 
 
+}
+
+
+function updateSides(){
+
+	var currentNode;
+	var neightbourNode;
+	var firstCandidate;
+	var secondCandidate;
+
+
+	for(let index = 0; index < m_GlobalNodeList.length; index++){
+
+		currentNode = m_GlobalNodeList[index];
+		neightbourNode = m_GlobalNodeList[index];
+
+		//si te el mateix x que els bordes tractar diferent (igual que en la y)
+
+		if(neightbourNode.upper != null){
+			neightbourNode = neightbourNode.upper;
+			firstCandidate = "right";
+			secondCandidate = "upper";
+		}
+		else if(neightbourNode.right != null){
+			neightbourNode = neightbourNode.right;
+			firstCandidate = "lower";
+			secondCandidate = "right";
+		}
+		else if(neightbourNode.lower != null){
+			neightbourNode = neightbourNode.lower;
+			firstCandidate = "left";
+			secondCandidate = "lower";
+		}
+		else if(neightbourNode.left != null){
+			neightbourNode = neightbourNode.left;
+			firstCandidate = "upper";
+			secondCandidate = "left";
+		}
+		else{
+			console.error("This node doesn't have neightbours");
+			console.error(neightbourNode);
+
+		}
+
+		do{
+			switch(firstCandidate){
+
+				case "upper":
+					if(neightbourNode.upper != null){
+
+						neightbourNode = neightbourNode.upper;
+
+					}
+					break;
+				case "lower":
+					break;
+				case "right":
+					break;
+				case "left":
+					break;
+
+			}
+
+
+
+		}
+		while(currentNode != neightbourNode);
+	}
 }
 
 

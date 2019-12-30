@@ -5,6 +5,9 @@ var m_Context = m_Canvas.getContext("2d");
 var m_BrickWidthInput = document.getElementById("brickWidth");
 var m_BrickHeightInput = document.getElementById("brickHeight");
 
+var m_LeftOffsetInput = document.getElementById("leftOffset");
+var m_RightOffsetInput = document.getElementById("rightOffset");
+
 var m_NoiseInput = document.getElementById("iNoisePc");
 
 var m_OkButton = document.getElementById("okBtn");
@@ -20,6 +23,9 @@ var m_Index = 0;
 
 var m_AverageBrickWidth = parseInt(m_BrickWidthInput.value); //si no lo convertimos a numero nos dara valores raros
 var m_AverageBrickHeight = parseInt(m_BrickHeightInput.value); 
+
+var m_LeftOffset = parseInt(m_LeftOffsetInput.value); //si no lo convertimos a numero nos dara valores raros
+var m_RightOffset = parseInt(m_RightOffsetInput.value); 
 
 var m_Noise = parseInt(m_NoiseInput.value)/100; //the noise for length (0 means without noise, 1 maximum noise)
 
