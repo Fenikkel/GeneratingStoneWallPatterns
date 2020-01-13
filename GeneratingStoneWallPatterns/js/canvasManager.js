@@ -446,10 +446,13 @@ function paintDebugSides(){ // Paints a line for the side or sides with a brick
                 y = m_CanvasHeight - currentEdge.startNode.position.y;
                 m_Context.moveTo(middle , y);
                 m_Context.lineTo(middle , (y + 10) );
-                console.log("PAINTED: " + middle + ", " + (y - 5));
+                //console.log("PAINTED: " + middle + ", " + (y + 10));
             }
             else{// vertical
-                //per fer
+                
+                m_Context.moveTo(currentEdge.startNode.position.x, middle);
+                m_Context.lineTo((currentEdge.startNode.position.x + 10), middle);
+
             }
         
             m_Context.stroke();

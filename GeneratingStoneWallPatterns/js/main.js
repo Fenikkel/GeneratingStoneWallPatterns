@@ -108,7 +108,7 @@
 
   m_DebugButton.addEventListener("click", function() {
 
-    
+    updateSides();
 
     //limpiamos canvas
     m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);

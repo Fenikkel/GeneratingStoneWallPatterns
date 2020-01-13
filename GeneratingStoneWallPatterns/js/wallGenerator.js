@@ -187,10 +187,10 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         console.log("\n\n");
 
         //HORIZONTAL UP
-		//createEdge(leftUpNode, rightUpNode);
-        var tempEdge = createEdge(leftUpNode, rightUpNode);
-
-        tempEdge.rightSide = true; 
+        createEdge(leftUpNode, rightUpNode);
+        
+        // var tempEdge = createEdge(leftUpNode, rightUpNode);
+        // tempEdge.rightSide = true; 
 
 
         console.log("VERTICAL LEFT");
@@ -1087,13 +1087,14 @@ function updateSides(){
 
 		if(ground || leftBorder || rightBorder){ //do nothing, can do errors
 			//neightbour and currend node will be equals
-			console.warn("BORDER");
+			//console.warn("BORDER");
 		}
 		else{
 
 			
 			//Inizialice the loop
-			
+            
+            //pillamos el siguiente el el ciclo del ladrillo
 			var candidates = initializeStoneArea(neightbourNode); //clockwise, decide the neightbour and return the candidates. Probably the neightbour is the right or the lower
 			
 			firstCandidate = candidates[0];
@@ -1107,9 +1108,10 @@ function updateSides(){
 
 
 		do{
-
+            console.log("iteracion");
 			if(ground || leftBorder || rightBorder){ //do nothing, can do errors
-				console.warn("BROKE");
+                //console.warn("BROKE");
+                //pillaremos el siguiente nodo
 				break;
 			}
 
@@ -1157,7 +1159,7 @@ function initializeStoneArea(node){
 
 
 	do{
-		candidates = checkCandidate(node, neightbours[index]);
+		candidates = checkCandidate(node, neightbours[index]); //check if this neightbour is disponible, if not, we get an empty array so we check the next. checkCandidate also uptades the side that we start
 		index++;
 
 		if(index > 3){
