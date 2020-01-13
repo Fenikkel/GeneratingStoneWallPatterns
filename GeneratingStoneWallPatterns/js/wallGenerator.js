@@ -21,19 +21,11 @@ function makeWallJointPattern(){
     createEdge(startFloorNode, endFloorNode);
 
     //build rows
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
+    for (let index = 0; index < m_Rows; index++) {
+
+        tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);   
     
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    
-    /*tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    tetrisBruteForceEdges(m_LeftOffset, m_CanvasWidth - m_RightOffset, m_AverageBrickWidth, m_AverageBrickHeight, m_Noise);
-    */
+    }
 
 
     console.log("Global node list LENGTH: " + m_GlobalNodeList.length);
@@ -194,10 +186,11 @@ function tetrisBruteForceEdges(wallInit, wallFinal, averageBrickWidth, averageBr
         createHorizontalBrickEdge(leftDownNode, rightDownNode, "lower");
         console.log("\n\n");
 
-		createEdge(leftUpNode, rightUpNode);
-        //var tempEdge = createEdge(leftUpNode, rightUpNode);
+        //HORIZONTAL UP
+		//createEdge(leftUpNode, rightUpNode);
+        var tempEdge = createEdge(leftUpNode, rightUpNode);
 
-        //tempEdge.rightSide = true; 
+        tempEdge.rightSide = true; 
 
 
         console.log("VERTICAL LEFT");
@@ -914,6 +907,7 @@ function getTheHorizontalEdge(node, mode){ //mode: "start" or "end" for get the 
         return null; // there is no horizontal edge
 }
 
+//millorar
 function displaceNodes(displace){
 
 	for(let index = 0; index < m_GlobalNodeList.length; index++){
@@ -1060,7 +1054,7 @@ function checkCandidate(node, candidate){
 	return candidates;
 }
 
-
+//mal
 function updateSides(){
 
 
@@ -1153,7 +1147,7 @@ function updateSides(){
 	}
 }
 
-
+//mal
 function initializeStoneArea(node){
 
 	var neightbours = ["right", "lower", "left", "upper"]; //The order it's important. There is enought with right and lower.

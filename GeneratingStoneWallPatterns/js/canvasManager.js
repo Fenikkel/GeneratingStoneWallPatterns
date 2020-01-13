@@ -404,3 +404,58 @@ function pointPaintEdges(){
     }
 }
 
+function paintDebugSides(){ // Paints a line for the side or sides with a brick
+
+    m_Context.lineWidth = 2; 
+    m_Context.strokeStyle = "black";
+
+    var currentEdge;
+    var currentStartNode;
+    var currentEndNode;
+
+    var y;
+
+    for(var index = 0; index < m_GlobalEdgeList.length ; index ++){
+
+        currentEdge = m_GlobalEdgeList[index];
+
+        var horizontal = false;
+        var vertical = false;
+
+        var middle = 0;
+
+        if(currentEdge.startNode.position.x == currentEdge.endNode.position.x){
+            vertical = true;
+        }
+        else{
+            horizontal = true;
+        }
+
+        if(horizontal){
+            middle = (currentEdge.startNode.position.x + currentEdge.endNode.position.x)/2;    
+        }
+        else{
+            middle = (currentEdge.startNode.position.y + currentEdge.endNode.position.y)/2;
+        }
+
+        if(currentEdge.rightSide){ // pintem els que si tenen true
+
+            m_Context.beginPath();
+
+            if(horizontal){
+                y = m_CanvasHeight - currentEdge.startNode.position.y;
+                m_Context.moveTo(middle , y);
+                m_Context.lineTo(middle , (y + 10) );
+                console.log("PAINTED: " + middle + ", " + (y - 5));
+            }
+            else{// vertical
+                //per fer
+            }
+        
+            m_Context.stroke();
+        }
+    }
+
+
+}
+

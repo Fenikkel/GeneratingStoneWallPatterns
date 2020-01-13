@@ -80,23 +80,48 @@
     makeWallJointPattern();
   })
 
+  m_RowsInput.addEventListener('change', function() {
 
-  m_OkButton.addEventListener("click", function() {
+    m_Rows = parseInt(m_RowsInput.value);
+
+    makeWallJointPattern();
+  })
+
+
+  m_DisplaceButton.addEventListener("click", function() {
     //makeWallJointPattern();
-    //displaceNodes(2);
-    updateSides();
+    displaceNodes(2);
+    //updateSides();
 
     //limpiamos canvas
-    //m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
-    //m_Context.fillStyle = "gray";//"#f5f0f0";
-    //m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
+    m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
+    m_Context.fillStyle = "gray";//"#f5f0f0";
+    m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
 
     //paintWall();
 
-    //paintEdges();
-    //paintNodes();
+    paintEdges();
+    paintNodes();
 
-    debugPaintEdges();
+    //debugPaintEdges();
+  })
+
+  m_DebugButton.addEventListener("click", function() {
+
+    
+
+    //limpiamos canvas
+    m_Context.clearRect(0, 0, m_Canvas.width, m_Canvas.height);
+    m_Context.fillStyle = "gray";//"#f5f0f0";
+    m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
+
+    //paintWall();
+
+    paintEdges();
+    paintNodes();
+    paintDebugSides();
+
+    //debugPaintEdges();
   })
 
 

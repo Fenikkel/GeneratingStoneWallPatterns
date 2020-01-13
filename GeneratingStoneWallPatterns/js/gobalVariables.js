@@ -2,6 +2,8 @@
 var m_Canvas = document.getElementById("wallCanvas");
 var m_Context = m_Canvas.getContext("2d");
 
+var m_RowsInput = document.getElementById("rows");
+
 var m_BrickWidthInput = document.getElementById("brickWidth");
 var m_BrickHeightInput = document.getElementById("brickHeight");
 
@@ -10,7 +12,8 @@ var m_RightOffsetInput = document.getElementById("rightOffset");
 
 var m_NoiseInput = document.getElementById("iNoisePc");
 
-var m_OkButton = document.getElementById("okBtn");
+var m_DisplaceButton = document.getElementById("displaceBtn");
+var m_DebugButton = document.getElementById("debugBtn");
 
 //Global variables
 var m_GlobalNodeList = []; //Orden insercion ladrillo. 1: DonwLeft, 2: UpLeft, 3: UpRight, 4: DownRight
@@ -20,6 +23,8 @@ var m_GlobalBrickList = [];
 
 
 var m_Index = 0;
+
+var m_Rows = parseInt(m_RowsInput.value); //si no lo convertimos a numero nos dara valores raros
 
 var m_AverageBrickWidth = parseInt(m_BrickWidthInput.value); //si no lo convertimos a numero nos dara valores raros
 var m_AverageBrickHeight = parseInt(m_BrickHeightInput.value); 
