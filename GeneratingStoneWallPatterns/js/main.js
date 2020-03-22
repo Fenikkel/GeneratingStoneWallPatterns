@@ -98,10 +98,10 @@
     m_Context.fillStyle = "gray";//"#f5f0f0";
     m_Context.fillRect(0, 0, m_Canvas.width, m_Canvas.height);
 
-    //paintWall();
+    paintWall();
 
-    paintEdges();
-    paintNodes();
+    // paintEdges();
+    // paintNodes();
 
     //debugPaintEdges();
   })

@@ -32,10 +32,10 @@ function makeWallJointPattern(){
     console.log("Global brick list LENGTH: " + m_GlobalBrickList.length);
     console.log("Global edge list LENGTH: " + m_GlobalEdgeList.length);
 
-    //paintWall();
+    paintWall();
 
-    paintEdges();
-    paintNodes();
+    //paintEdges();
+    //paintNodes();
     //debugPaintEdges();
 
 }
